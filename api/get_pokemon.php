@@ -44,6 +44,17 @@ if ($team === 'player') {
 $query->execute(['pokemon_id' => $pokemon_id, 'character_id' => $character_id]);
 $stats = $query->fetch(PDO::FETCH_ASSOC);
 
+// Get move IDs to be able to pass to the get_move endpoint for info
+$move_query = $pdo->prepare("
+    SELECT attack_id FROM PokemonAttacks
+    WHERE pokemon_id = :pokemon_id
+");
+$move_query->execute(['pokemon_id' => $stats['id']]);
+$move_ids = $move_query->fetchAll(PDO::FETCH_COLUMN);
+
+// Add move IDs to the result
+$stats['move_ids'] = $move_ids;
+
 // Return stats as JSON
 echo json_encode($stats);
 
