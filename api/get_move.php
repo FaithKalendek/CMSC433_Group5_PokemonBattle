@@ -8,11 +8,11 @@ require '../pdo.php';
 // Connect to database
 $pdo = getPokemonPDO();
 
-// Get the attack_id from the request
-$attack_id = $_GET['attack_id'];
+// Get the move_id from the request
+$move_id = $_GET['move_id'];
 
-$query = $pdo->prepare("SELECT * FROM Attacks WHERE id = :attack_id");
-$query->execute([':attack_id' => $attack_id]);
+$query = $pdo->prepare("SELECT * FROM Attacks WHERE id = :move_id");
+$query->execute([':move_id' => $move_id]);
 
 $attack_info = $query->fetch(PDO::FETCH_ASSOC);
 
