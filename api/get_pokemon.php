@@ -46,7 +46,7 @@ $stats = $query->fetch(PDO::FETCH_ASSOC);
 
 // Get move IDs to be able to pass to the get_move endpoint for info
 $move_query = $pdo->prepare("
-    SELECT move_id FROM PokemonAttacks
+    SELECT move_id FROM PokemonMoves
     WHERE pokemon_id = :pokemon_id
 ");
 $move_query->execute(['pokemon_id' => $stats['id']]);

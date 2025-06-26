@@ -11,7 +11,7 @@ $pdo = getPokemonPDO();
 // Get the move_id from the request
 $move_id = $_GET['move_id'];
 
-$query = $pdo->prepare("SELECT * FROM Attacks WHERE id = :move_id");
+$query = $pdo->prepare("SELECT * FROM Moves WHERE id = :move_id");
 $query->execute([':move_id' => $move_id]);
 
 $attack_info = $query->fetch(PDO::FETCH_ASSOC);
