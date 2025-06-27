@@ -157,9 +157,13 @@ function tackle ($attacker, $defender, $pdo, $is_attacker_player) {
     // No effects, just damage, so just calculate new current_hp and update db
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
-    $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id
-    ");
-    $query->execute([":new_hp"=> $new_hp, ":defender_id" => $defender['id']]);
+    if ($table === 'PlayerPokemon') {
+        $query = $pdo->prepare("UPDATE PlayerPokemon SET current_hp = :new_hp WHERE player_id = :player_id AND pokemon_id = :pokemon_id");
+        $query->execute([":new_hp"=> $new_hp, ":player_id" => $defender['player_id'], ":pokemon_id" => $defender['pokemon_id']]);
+    } else {
+        $query = $pdo->prepare("UPDATE OpponentPokemon SET current_hp = :new_hp WHERE opponent_id = :opponent_id AND pokemon_id = :pokemon_id");
+        $query->execute([":new_hp"=> $new_hp, ":opponent_id" => $defender['opponent_id'], ":pokemon_id" => $defender['pokemon_id']]);
+    }
 
     return ['hit' => true];
 }
@@ -177,12 +181,15 @@ function vine_whip ($attacker, $defender, $pdo, $is_attacker_player) {
         return ['hit' => false];
     }
 
-    // No effects, just damage, so just calculate new current_hp and update db
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
-    $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id
-    ");
-    $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
+    if ($table === 'PlayerPokemon') {
+        $query = $pdo->prepare("UPDATE PlayerPokemon SET current_hp = :new_hp WHERE player_id = :player_id AND pokemon_id = :pokemon_id");
+        $query->execute([":new_hp"=> $new_hp, ":player_id" => $defender['player_id'], ":pokemon_id" => $defender['pokemon_id']]);
+    } else {
+        $query = $pdo->prepare("UPDATE OpponentPokemon SET current_hp = :new_hp WHERE opponent_id = :opponent_id AND pokemon_id = :pokemon_id");
+        $query->execute([":new_hp"=> $new_hp, ":opponent_id" => $defender['opponent_id'], ":pokemon_id" => $defender['pokemon_id']]);
+    }
 
     return ['hit' => true];
 }
@@ -221,9 +228,13 @@ function scratch ($attacker, $defender, $pdo, $is_attacker_player) {
     // No effects, just damage, so just calculate new current_hp and update db
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
-    $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id
-    ");
-    $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
+    if ($table === 'PlayerPokemon') {
+        $query = $pdo->prepare("UPDATE PlayerPokemon SET current_hp = :new_hp WHERE player_id = :player_id AND pokemon_id = :pokemon_id");
+        $query->execute([":new_hp"=> $new_hp, ":player_id" => $defender['player_id'], ":pokemon_id" => $defender['pokemon_id']]);
+    } else {
+        $query = $pdo->prepare("UPDATE OpponentPokemon SET current_hp = :new_hp WHERE opponent_id = :opponent_id AND pokemon_id = :pokemon_id");
+        $query->execute([":new_hp"=> $new_hp, ":opponent_id" => $defender['opponent_id'], ":pokemon_id" => $defender['pokemon_id']]);
+    }
 
     return ['hit' => true];
 }
@@ -298,9 +309,13 @@ function tail_whip ($defender, $pdo, $is_attacker_player) {
 
     // Update defender's defense modifier in database
     $table = get_table($is_attacker_player, 'defender');
-    $query = $pdo->prepare("UPDATE $table SET defense_modifier = :new_defense_modifier WHERE id = :defender_id
-    ");
-    $query->execute([':new_defense_modifier' => $new_defense_modifier, ':defender_id' => $defender['id']]);
+    if ($table === 'PlayerPokemon') {
+        $query = $pdo->prepare("UPDATE PlayerPokemon SET defense_modifier = :new_defense_modifier WHERE player_id = :player_id AND pokemon_id = :pokemon_id");
+        $query->execute([':new_defense_modifier' => $new_defense_modifier, ':player_id' => $defender['player_id'], ':pokemon_id' => $defender['pokemon_id']]);
+    } else {
+        $query = $pdo->prepare("UPDATE OpponentPokemon SET defense_modifier = :new_defense_modifier WHERE opponent_id = :opponent_id AND pokemon_id = :pokemon_id");
+        $query->execute([':new_defense_modifier' => $new_defense_modifier, ':opponent_id' => $defender['opponent_id'], ':pokemon_id' => $defender['pokemon_id']]);
+    }
 }
 
 /*Bite:
