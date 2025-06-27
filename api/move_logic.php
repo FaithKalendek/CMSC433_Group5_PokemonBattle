@@ -103,21 +103,14 @@ function calculate_dmg ($attacker, $defender, $power, $move_accuracy) {
         }
 
         // Calculate damage:
-        
-        // Base damage = (attacker's attack * move's power) / defender's defense
-        $base_damage = ($attacker['attack'] * $power) / $defender['defense'];
-
-        // Apply type effectiveness multiplier
-        // Lookup based on attacker and defender types
+        // Use a balanced formula for low-level stats (level = 1)
+        // Github Copilot helped me come up with this formula since my last formula was suuuuuuper unbalanced (dmg way too big)
         global $type_effectiveness; // Use global var defined above for lookup
         $type_effectiveness_mod = $type_effectiveness[$attacker['type']][$defender['type']];
-        $base_damage *= $type_effectiveness_mod;
-
-        // Apply crit multiplier (default 1, 1.5 if crit)
-        $base_damage *= $crit_modifier;
-        
-        // Round down to nearest integer
-        $damage = floor($base_damage);
+        $modifier = $type_effectiveness_mod * $crit_modifier;
+        $level = 10; // Level 1 was way too weak
+        $base = ((2 * $level / 5 + 2) * $attacker['attack'] * $power) / $defender['defense'];
+        $damage = floor((($base / 50) + 2) * $modifier);
 
         return $damage;
     }
