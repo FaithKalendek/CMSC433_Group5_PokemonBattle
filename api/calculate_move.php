@@ -45,6 +45,8 @@ $attacker_id = $_GET['attacker_id'];
 $defender_id = $_GET['defender_id'];
 $move_id = $_GET['move_id'];
 $is_attacker_player = $_GET['is_attacker_player'];
+$player_id = $_GET['player_id'];
+$opponent_id = $_GET['opponent_id'];
 
 // Get attacker and defender stats from database
 // If is_attacker_player is true, get attacker from PlayerPokemon and defender from OpponentPokemon
@@ -53,40 +55,61 @@ if ($is_attacker_player === 'true') {
 
     // Get attacker from PlayerPokemon
     $query = $pdo->prepare("
-        SELECT * FROM PlayerPokemon WHERE id = :attacker_id
+        SELECT * FROM PlayerPokemon WHERE player_id = :player_id AND pokemon_id = :attacker_id
     ");
-    $query->execute(['attacker_id' => $attacker_id]);
+    $query->execute([':player_id' => $player_id, ':attacker_id' => $attacker_id]);
     $attacker = $query->fetch(PDO::FETCH_ASSOC);
 
     // Get defender from OpponentPokemon
     $query = $pdo->prepare("
-        SELECT * FROM OpponentPokemon WHERE id = :defender_id
+        SELECT * FROM OpponentPokemon WHERE opponent_id = :opponent_id AND pokemon_id = :defender_id
     ");
-    $query->execute(['defender_id' => $defender_id]);
+    $query->execute([':opponent_id' => $opponent_id, ':defender_id' => $defender_id]);
     $defender = $query->fetch(PDO::FETCH_ASSOC);
 
 } else {
 
     // Get attacker from OpponentPokemon
     $query = $pdo->prepare("
-        SELECT * FROM OpponentPokemon WHERE id = :attacker_id
+        SELECT * FROM OpponentPokemon WHERE opponent_id = :opponent_id AND pokemon_id = :attacker_id
     ");
-    $query->execute(['attacker_id' => $attacker_id]);
+    $query->execute([':opponent_id' => $opponent_id, ':attacker_id' => $attacker_id]);
     $attacker = $query->fetch(PDO::FETCH_ASSOC);
 
     // Get defender from PlayerPokemon
     $query = $pdo->prepare("
-        SELECT * FROM PlayerPokemon WHERE id = :defender_id
+        SELECT * FROM PlayerPokemon WHERE player_id = :player_id AND pokemon_id = :defender_id
     ");
-    $query->execute(['defender_id' => $defender_id]);
+    $query->execute([':player_id' => $player_id, ':defender_id' => $defender_id]);
     $defender = $query->fetch(PDO::FETCH_ASSOC);    
 }
+
+ If (!$attacker || !$defender) {
+    echo json_encode(['error' => 'Attacker or defender not found.']);
+    exit;
+}
+
+// Fetch names from Pokemon table
+$query = $pdo->prepare("SELECT name FROM Pokemon WHERE id = :pokemon_id");
+$query->execute([':pokemon_id' => $attacker['pokemon_id']]);
+$attacker['name'] = $query->fetchColumn();
+
+$query->execute([':pokemon_id' => $defender['pokemon_id']]);
+$defender['name'] = $query->fetchColumn();
+
+// Fetch types from Pokemon table
+$query = $pdo->prepare("SELECT type FROM Pokemon WHERE id = :pokemon_id");
+$query->execute([':pokemon_id' => $attacker['pokemon_id']]);
+$attacker['type'] = $query->fetchColumn();
+
+$query->execute([':pokemon_id' => $defender['pokemon_id']]);
+$defender['type'] = $query->fetchColumn();
 
 // Get move info from database
 $query = $pdo->prepare("
     SELECT * FROM Moves WHERE id = :move_id
 ");
-$query->execute(['move_id' => $move_id]);
+$query->execute([':move_id' => $move_id]);
 $move = $query->fetch(PDO::FETCH_ASSOC);
 
 

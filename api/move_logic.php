@@ -75,7 +75,7 @@ $type_effectiveness = [
 function calculate_dmg ($attacker, $defender, $power, $move_accuracy) {
 
     // Accuracy = accuracy debuff modifier (if any) * move's accuracy
-    $accuracy = $attacker['accuracy_modifier'] * $move_accuracy;
+    $accuracy = $attacker['accuracy_debuff'] * $move_accuracy;
 
     // Not dealing with evasion, so don't worry abt it
     
@@ -552,12 +552,12 @@ function sand_attack ($defender, $pdo, $is_attacker_player) {
 
     // Sand Attack decreases the defender's accuracy by 1 stage
     // Since we're just storing modifiers, just decrease accuracy modifier by one stage (multiply by 2/3)
-    $new_accuracy_modifier = $defender['accuracy_modifier'] * (2 / 3);
+    $new_accuracy_debuff = $defender['accuracy_debuff'] * (2 / 3);
 
     // Update defender's accuracy modifier in database
     $table = get_table($is_attacker_player, 'defender');
-    $query = $pdo->prepare("UPDATE $table SET accuracy_modifier = :new_accuracy_modifier WHERE id = :defender_id");
-    $query->execute([':new_accuracy_modifier' => $new_accuracy_modifier, ':defender_id' => $defender['id']]);
+    $query = $pdo->prepare("UPDATE $table SET accuracy_debuff = :new_accuracy_debuff WHERE id = :defender_id");
+    $query->execute([':new_accuracy_debuff' => $new_accuracy_debuff, ':defender_id' => $defender['id']]);
 }
 
 /*Defense Curl:
@@ -645,9 +645,9 @@ function mud_slap ($attacker, $defender, $pdo, $is_attacker_player) {
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
     // Lower defender's accuracy by 1 stage
-    $new_accuracy_modifier = $defender['accuracy_modifier'] * (2 / 3);
-    $query = $pdo->prepare("UPDATE $table SET accuracy_modifier = :new_accuracy_modifier WHERE id = :defender_id");
-    $query->execute([':new_accuracy_modifier' => $new_accuracy_modifier, ':defender_id' => $defender['id']]);
+    $new_accuracy_debuff = $defender['accuracy_debuff'] * (2 / 3);
+    $query = $pdo->prepare("UPDATE $table SET accuracy_debuff = :new_accuracy_debuff WHERE id = :defender_id");
+    $query->execute([':new_accuracy_debuff' => $new_accuracy_debuff, ':defender_id' => $defender['id']]);
 
     return ['hit' => true];
 }
