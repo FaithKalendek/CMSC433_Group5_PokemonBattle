@@ -161,6 +161,7 @@ function tackle ($attacker, $defender, $pdo, $is_attacker_player) {
     ");
     $query->execute([":new_hp"=> $new_hp, ":defender_id" => $defender['id']]);
 
+    return ['hit' => true];
 }
 
 /*Vine Whip:
@@ -183,6 +184,7 @@ function vine_whip ($attacker, $defender, $pdo, $is_attacker_player) {
     ");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
+    return ['hit' => true];
 }
 
 /*Growth:
@@ -223,6 +225,7 @@ function scratch ($attacker, $defender, $pdo, $is_attacker_player) {
     ");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
+    return ['hit' => true];
 }
 
 /*Absorb:
@@ -256,6 +259,7 @@ function absorb ($attacker, $defender, $pdo, $is_attacker_player) {
     ");
     $query->execute([':new_attacker_hp' => $new_attacker_hp, ':attacker_id' => $attacker['id']]);
 
+    return ['hit' => true];
 }
 
 /*Ember:
@@ -278,6 +282,7 @@ function ember ($attacker, $defender, $pdo, $is_attacker_player) {
     ");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
+    return ['hit' => true];
 }
 
 /*Tail Whip:
@@ -369,6 +374,7 @@ function pound ($attacker, $defender, $pdo, $is_attacker_player) {
     $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id");
     $query->execute([":new_hp"=> $new_hp, ":defender_id" => $defender['id']]);
 
+    return ['hit' => true];
 }
 
 /*Bubble Beam:
@@ -400,6 +406,8 @@ function bubble_beam ($attacker, $defender, $pdo, $is_attacker_player) {
         $query = $pdo->prepare("UPDATE $table SET speed_modifier = :new_speed_modifier WHERE id = :defender_id");
         $query->execute([':new_speed_modifier' => $new_speed_modifier, ':defender_id' => $defender['id']]);
     }
+
+    return ['hit' => true];
 }
 
 /*Water Gun:
@@ -421,6 +429,7 @@ function water_gun ($attacker, $defender, $pdo, $is_attacker_player) {
     $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id");
     $query->execute([":new_hp"=> $new_hp, ":defender_id" => $defender['id']]);
 
+    return ['hit' => true];
 }
 
 /*Electro Ball:
@@ -457,13 +466,17 @@ function electro_ball ($attacker, $defender, $pdo, $is_attacker_player) {
     // Calculate damage using the power determined above
     $damage = calculate_dmg($attacker, $defender, $power, 100); // Move accuracy is always 100 for this move
 
+    if ($damage == 0) {
+        return ['hit' => false];
+    }
+
     // Update defender's current_hp in database
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
     $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
-    return ['damage' => $damage, ':new_hp' => $new_hp];
+    return ['hit' => true];
 }
 
 /*Screech:
@@ -517,13 +530,17 @@ function gyro_ball ($attacker, $defender, $pdo, $is_attacker_player) {
     // Calculate damage using the power determined above
     $damage = calculate_dmg($attacker, $defender, $power, 100); 
 
+    if ($damage == 0) {
+        return ['hit' => false];
+    }
+
     // Update defender's current_hp in database
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
     $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
-    return ['damage' => $damage, ':new_hp' => $new_hp];
+    return ['hit' => true];
 }
 
 /*Sand Attack:
@@ -570,13 +587,17 @@ function rock_throw ($attacker, $defender, $pdo, $is_attacker_player) {
     // Calculate damage
     $damage = calculate_dmg($attacker, $defender, 50, 90); // Power is 50, accuracy is 90
 
+    if ($damage == 0) {
+        return ['hit' => false];
+    }
+
     // Update defender's current_hp in database
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
     $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
-    return ['damage' => $damage, ':new_hp' => $new_hp];
+    return ['hit' => true];
 }
 
 /*Astonish:
@@ -589,6 +610,10 @@ function astonish ($attacker, $defender, $pdo, $is_attacker_player) {
     // Calculate damage
     $damage = calculate_dmg($attacker, $defender, 30, 100); // Power is 30, accuracy is 100
 
+    if ($damage == 0) {
+        return ['hit' => false];
+    }
+
     // Update defender's current_hp in database
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
@@ -598,22 +623,20 @@ function astonish ($attacker, $defender, $pdo, $is_attacker_player) {
     // Roll to see if defender flinches (30% chance)
     $roll = rand(1, 100);
     if ($roll <= 30) {
-        // Defender flinches, skip their next turn (to be handled in frontend)
-        return ['damage' => $damage, ':new_hp' => $new_hp, 'flinch' => true];
+        return ['hit' => true, 'flinch' => true];
     }
 
-    return ['damage' => $damage, ':new_hp' => $new_hp];
+    return ['hit' => true, 'flinch' => false];
 }
 
-/*Mud-Slap:
-The user hurls mud in the target’s face to inflict damage and lower its accuracy by one stage.
-Power	20
-Accuracy	100
- */
 function mud_slap ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
     $damage = calculate_dmg($attacker, $defender, 20, 100); // Power is 20, accuracy is 100
+
+    if ($damage == 0) {
+        return ['hit' => false];
+    }
 
     // Update defender's current_hp in database
     $new_hp = max(0, $defender['current_hp'] - $damage);
@@ -626,18 +649,17 @@ function mud_slap ($attacker, $defender, $pdo, $is_attacker_player) {
     $query = $pdo->prepare("UPDATE $table SET accuracy_modifier = :new_accuracy_modifier WHERE id = :defender_id");
     $query->execute([':new_accuracy_modifier' => $new_accuracy_modifier, ':defender_id' => $defender['id']]);
 
-    return ['damage' => $damage, ':new_hp' => $new_hp];
+    return ['hit' => true];
 }
 
-/*Gust:
-A gust of wind is whipped up by wings and launched at the target to inflict damage.
-Power	40
-Accuracy	100
- */
 function gust ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
     $damage = calculate_dmg($attacker, $defender, 40, 100); // Power is 40, accuracy is 100
+
+    if ($damage == 0) {
+        return ['hit' => false];
+    }
 
     // Update defender's current_hp in database
     $new_hp = max(0, $defender['current_hp'] - $damage);
@@ -645,14 +667,13 @@ function gust ($attacker, $defender, $pdo, $is_attacker_player) {
     $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
-    return ['damage' => $damage, ':new_hp' => $new_hp];
+    return ['hit' => true];
 }
 
 /*Leer:
 The user gives opposing Pokémon an intimidating leer that lowers the Defense stat by one stage.
 Power	—
-Accuracy	100
- */
+Accuracy	100 */
 function leer ($defender, $pdo, $is_attacker_player) {
 
     // Leer decreases the defender's defense by 1 stage
@@ -665,44 +686,40 @@ function leer ($defender, $pdo, $is_attacker_player) {
     $query->execute([':new_defense_modifier' => $new_defense_modifier, ':defender_id' => $defender['id']]);
 }
 
-/*Wing Attack:
-The target is struck with large, imposing wings spread wide to inflict damage.
-Power	60
-Accuracy	100
- */
 function wing_attack ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
     $damage = calculate_dmg($attacker, $defender, 60, 100); // Power is 60, accuracy is 100
 
+    if ($damage == 0) {
+        return ['hit' => false];
+    }
+
     // Update defender's current_hp in database
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
     $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
-    return ['damage' => $damage, ':new_hp' => $new_hp];
+    return ['hit' => true];
 }
 
-/*Peck:
-The target is jabbed with a sharply pointed beak or horn.
-Type	Flying
-Category	Physical  Physical
-Power	35
-Accuracy	100
- */
 function peck ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
     $damage = calculate_dmg($attacker, $defender, 35, 100); // Power is 35, accuracy is 100
 
+    if ($damage == 0) {
+        return ['hit' => false];
+    }
+
     // Update defender's current_hp in database
     $new_hp = max(0, $defender['current_hp'] - $damage);
     $table = get_table($is_attacker_player, 'defender');
     $query = $pdo->prepare("UPDATE $table SET current_hp = :new_hp WHERE id = :defender_id");
     $query->execute([':new_hp' => $new_hp, ':defender_id' => $defender['id']]);
 
-    return ['damage' => $damage, ':new_hp' => $new_hp];
+    return ['hit' => true];
 }
 
 /*Agility:
