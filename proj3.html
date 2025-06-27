@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pokémon Battle</title>
+  <link rel="stylesheet" href="proj3.css">
+</head>
+<body>
+
+<!-- banner with title -->
+<header>
+  <h1>Pokémon Battle</h1>
+</header>
+
+<!-- Player setup screen -->
+<section id="player-setup">
+  <label for="player-name">Enter Your Name:</label>
+  <input type="text" id="player-name" placeholder="Ash">
+
+  <p>Are you a boy? Or are you a girl?</p>
+  <label>
+    <input type="radio" name="gender" value="boy" checked>
+    Boy
+  </label>
+  <label>
+    <input type="radio" name="gender" value="girl">
+    Girl
+  </label>
+
+  <!-- Shows trainer sprite based on selection -->
+  <div id="avatar-preview">
+    <p>Your Trainer:</p>
+    <img id="trainer-preview" src="proj3_images/user_sprite/boy.png" alt="Trainer Preview" width="100">
+  </div>
+
+  <button id="start-game">Start Game</button>
+</section>
+
+<!-- Main battle screen -->
+<main id="battle-screen" class="hidden">
+
+  <!-- Player's side -->
+  <div class="trainer player">
+    <img id="player-avatar" src="proj3_images/1st Generation/004Charmander.png" alt="Player Avatar">
+    <h2 id="player-name-display">Player</h2>
+    <div class="hp-bar"><div class="hp-fill" id="player-hp"></div></div>
+  </div>
+
+  <!-- Opponent's side -->
+  <div class="trainer opponent">
+    <img id="opponent-avatar" src="proj3_images/1st Generation/007Squirtle.png" alt="Opponent Avatar">
+    <h2>Opponent</h2>
+    <div class="hp-bar"><div class="hp-fill" id="opponent-hp"></div></div>
+  </div>
+
+  <!-- Attack buttons for player actions -->
+  <section id="action-panel">
+    <button class="move-btn">Attack 1</button>
+    <button class="move-btn">Attack 2</button>
+    <button class="move-btn">Attack 3</button>
+    <button class="move-btn">Attack 4</button>
+  </section>
+
+  <!-- Area to show status updates during the battle -->
+  <section id="status-box">
+    <p>Welcome to Pokemon Battle!</p>
+  </section>
+
+</main>
+</body>
+</html>
