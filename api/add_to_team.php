@@ -5,8 +5,8 @@ require '../pdo.php';
 // Connect to database
 $pdo = getPokemonPDO();
 
-// Get the player/opponent id and pokemon id from the request
-if ($_GET['is_player'] == 'true') {
+// Get the player/opponent id from the request
+if ($_GET['team'] == 'player') {
     $player_id = $_GET['character_id'];
 } else {
     $opponent_id = $_GET['character_id'];
