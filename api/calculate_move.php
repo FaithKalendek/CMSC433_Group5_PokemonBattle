@@ -95,4 +95,89 @@ Else, Calculate damage
             Return hit result with damage, new HP, and any effects
  */
 
+require '../pdo.php';
+
+// Connect to database
+$pdo = getPokemonPDO();
+
+// Get attacker ID, defender ID, move ID, and is_attacker_player from the request
+$attacker_id = $_GET['attacker_id'];
+$defender_id = $_GET['defender_id'];
+$move_id = $_GET['move_id'];
+$is_attacker_player = $_GET['is_attacker_player'];
+
+// Get attacker and defender stats from database
+// If is_attacker_player is true, get attacker from PlayerPokemon and defender from OpponentPokemon
+// Else, opposite
+if ($is_attacker_player === 'true') {
+
+    // Get attacker from PlayerPokemon
+    $query = $pdo->prepare("
+        SELECT * FROM PlayerPokemon WHERE id = :attacker_id
+    ");
+    $query->execute(['attacker_id' => $attacker_id]);
+    $attacker = $query->fetch(PDO::FETCH_ASSOC);
+
+    // Get defender from OpponentPokemon
+    $query = $pdo->prepare("
+        SELECT * FROM OpponentPokemon WHERE id = :defender_id
+    ");
+    $query->execute(['defender_id' => $defender_id]);
+    $defender = $query->fetch(PDO::FETCH_ASSOC);
+
+} else {
+
+    // Get attacker from OpponentPokemon
+    $query = $pdo->prepare("
+        SELECT * FROM OpponentPokemon WHERE id = :attacker_id
+    ");
+    $query->execute(['attacker_id' => $attacker_id]);
+    $attacker = $query->fetch(PDO::FETCH_ASSOC);
+
+    // Get defender from PlayerPokemon
+    $query = $pdo->prepare("
+        SELECT * FROM PlayerPokemon WHERE id = :defender_id
+    ");
+    $query->execute(['defender_id' => $defender_id]);
+    $defender = $query->fetch(PDO::FETCH_ASSOC);    
+}
+
+// Get move info from database
+$query = $pdo->prepare("
+    SELECT * FROM Moves WHERE id = :move_id
+");
+$query->execute(['move_id' => $move_id]);
+$move = $query->fetch(PDO::FETCH_ASSOC);
+
+// If accuracy is null, status move, no damage to calculate
+if ($move['accuracy'] == null) {
+
+    //     Apply Buff/Debuff Effect (calculate new stat value and update database)
+    //     return effect result
+    switch ($move['name']) {
+        case 'growl':
+    }
+
+} else {
+// Else, Calculate damage
+//     Accuracy = accuracy debuff modifier (if any) * move's accuracy
+//     Not dealing with evasion, so don't worry abt it
+//     Roll to hit (generate random number 1–100)
+//     If roll > accuracy, move misses
+//         return miss result
+//     Else, hit
+//         Roll again to see if crit
+//         If roll >= 95, crit
+//             Set crit modifier to 1.5
+//         Calculate damage:
+//             Base damage = (attacker's attack * move's power) / defender's defense
+//             Apply type effectiveness multiplier
+//             Apply crit multiplier (default 1, 1.5 if crit)
+//             Round down to nearest integer
+//             Subtract damage from defender’s current HP
+//             If HP drops to 0 or below, the Pokémon faints.
+//             Apply Move Effects (calculate chance if needed)
+//             Update Database with all changes
+//             Return hit result with damage, new HP, and any effects
+}
 ?>

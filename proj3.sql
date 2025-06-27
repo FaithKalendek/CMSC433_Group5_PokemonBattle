@@ -202,11 +202,15 @@ CREATE TABLE IF NOT EXISTS PlayerPokemon (
     id INT AUTO_INCREMENT PRIMARY KEY,
     player_id INT NOT NULL,
     pokemon_id INT NOT NULL,
+    max_hp INT NOT NULL,
     current_hp INT NOT NULL,
-    current_attack INT NOT NULL,
-    current_defense INT NOT NULL,
-    current_speed INT NOT NULL,
-    accuracy_debuff INT DEFAULT 0, -- For moves that lower accuracy
+    attack INT NOT NULL,
+    attack_modifier INT DEFAULT 1, -- For moves that increase/decrease attack
+    defense INT NOT NULL,
+    defense_modifier INT DEFAULT 1, -- For moves that increase/decrease defense
+    speed INT NOT NULL,
+    speed_modifier INT DEFAULT 1, -- For moves that increase/decrease speed
+    accuracy_debuff INT DEFAULT 1, -- For moves that lower accuracy
     FOREIGN KEY (player_id) REFERENCES Players(id),
     FOREIGN KEY (pokemon_id) REFERENCES Pokemon(id)
 );
@@ -218,11 +222,15 @@ CREATE TABLE IF NOT EXISTS OpponentPokemon (
     id INT AUTO_INCREMENT PRIMARY KEY,
     opponent_id INT NOT NULL,
     pokemon_id INT NOT NULL,
+    max_hp INT NOT NULL,
     current_hp INT NOT NULL,
-    current_attack INT NOT NULL,
-    current_defense INT NOT NULL,
-    current_speed INT NOT NULL,
-    accuracy_debuff INT DEFAULT 0, -- For moves that lower accuracy
+    attack INT NOT NULL,
+    attack_modifier INT DEFAULT 1, -- For moves that increase/decrease attack
+    defense INT NOT NULL,
+    defense_modifier INT DEFAULT 1, -- For moves that increase/decrease defense
+    speed INT NOT NULL,
+    speed_modifier INT DEFAULT 1, -- For moves that increase/decrease speed
+    accuracy_debuff INT DEFAULT 1, -- For moves that lower accuracy
     FOREIGN KEY (opponent_id) REFERENCES Opponents(id),
     FOREIGN KEY (pokemon_id) REFERENCES Pokemon(id)
 );
