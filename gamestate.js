@@ -4,9 +4,7 @@
 // Game states
 export const Phase = { 
     TITLE : 'TITLE', 
-    OVERWORLD : "OVERWORLD", 
     BATTLE : 'BATTLE',
-    CATCH : 'CATCH', 
     RESULT : 'RESULT'
 };
 

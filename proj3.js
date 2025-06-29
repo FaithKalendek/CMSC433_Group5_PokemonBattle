@@ -3,7 +3,7 @@ import { Phase } from './gamestate.js';
 import { Api } from './api.js';
 
 // Gamestate class that helps determine the players game state amount other important loops in the game.
-export class GateState {
+export class GameState {
     // initialize the player's state to the title screen
     // Set player's starting team to null and active pokemon to null alongside the player's active choice
     // Set the current enemy's team to null and active pokemon to 0
@@ -13,7 +13,7 @@ export class GateState {
 
 
     start () { this.#setPhase(Phase.TITLE); }
-    next() { this.#advanceGameState() }
+    next() { this.#advanceGameState(); }
 
 
 
@@ -21,23 +21,18 @@ export class GateState {
 
     #advanceGameState() {
         switch (this.#phase) {
-            case Phase.TITLE: return this.#goOverWorld();
-            case Phase.OVERWORLD: return this.#startBattle();
+            case Phase.TITLE: return this.#startBattle();
             case Phase.BATTLE: return this.#runTurn(); 
-            case Phase.RESULT: return this.#goOverWorld();
+            case Phase.RESULT: return this.#startBattle();
             default: return; 
 
         }
     }
 
 
-    #goOverWorld() {
-        this.#setPhase(Phase.OVERWORLD);
-        // TODO: call Api to move player and do things when the player is in the overworld
-    }
-
     async #startBattle() {
         this.#setPhase(Phase.BATTLE); 
+
         // TODO: Api calls to start battle and get player / enemy team.
 
     }
@@ -86,9 +81,19 @@ export class GateState {
 
     }
 
+    async #selectMove(moveId) {
+        if (this.#phase !== Phase.BATTLE) return;
+
+        // Set the player's choice to the move ID
+        this.#player.choice = moveId;
+
+        // Proceed to the next game state
+        this.next();
+    }
+
 
     // Sets the current game phase
-    #setPhase(phase) { this.#phase = p; }
+    #setPhase(phase) { this.#phase = phase; }
 
 
 }
