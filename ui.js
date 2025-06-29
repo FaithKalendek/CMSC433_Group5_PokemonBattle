@@ -9,7 +9,7 @@ const $playerHp = document.getElementById('player-hp');
 const $enemyHp = document.getElementById('opponent-hp');
 const moveButtons = document.querySelectorAll('.action-panel');
 const $start = document.getElementById('start-game');
-const $avatar = document.getElementById('opponent-avatar');
+const $avatar = document.getElementById('trainer-preview');
 
 // Show the initial section based on game state
 function show(section) {
@@ -37,7 +37,7 @@ document.querySelectorAll('input[name="gender"]').forEach(r => {
 });
 
 // Changes width values of Hp bars and result message
-document.addEventlistener('state', ({ detail:s}) => {
+document.addEventListener('state', ({ detail:s}) => {
     show(s.phase);
 
     if (s.phase === Phase.BATTLE) {
