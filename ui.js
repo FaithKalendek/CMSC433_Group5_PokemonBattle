@@ -3,13 +3,13 @@ import { game, Phase } from './gamestate.js';
 
 // DOM elements 
 const $setup = document.getElementById('player-setup');
-const $battle = document.getElementById('battle');
-const $status = document.getElementById('status');
+const $battle = document.getElementById('battle-screen');
+const $status = document.getElementById('#status-box p');
 const $playerHp = document.getElementById('player-hp');
-const $enemyHp = document.getElementById('enemy-hp');
-const moveButtons = document.querySelectorAll('.move-btn');
+const $enemyHp = document.getElementById('opponent-hp');
+const moveButtons = document.querySelectorAll('.action-panel');
 const $start = document.getElementById('start-game');
-const $avatar = document.getElementById('avatar');
+const $avatar = document.getElementById('opponent-avatar');
 
 // Show the initial section based on game state
 function show(section) {
@@ -31,8 +31,8 @@ moveButtons.forEach((button, i) => button.onclick = () => game.selectMove(i));
 // Changes to sprite when the player comfirms gender
 document.querySelectorAll('input[name="gender"]').forEach(r => {
     r.onchange = () => {
-        $avatar.src = r.value === 'boy' ? 'boy png' // Place boy png here
-        : 'girl png' // place girl png here
+        $avatar.src = r.value === 'boy' ? 'proj3_images/user_sprite.png' // Place boy png here
+        : 'proj3_images/user_sprite.png' // place girl png here
     }; 
 });
 
@@ -45,12 +45,12 @@ document.addEventlistener('state', ({ detail:s}) => {
         const e = s.currentEnemy.team[s.currentEnemy.active];
         $playerHp.style.width = `{(p.hp / p.maxHp) * 100}%`;
         $enemyHp.style.width = `{(e.hp / e.maxHp) * 100}%`;
-        $status.textContent = `${p.name} vs ${e.name} `;
+        $status.textContent = `${p.name} vs ${e.name} HP ${e.hp}`;
 
     }
 
     if (s.phase === Phase.RESULT) {
-        $status.textContent = s.player.active >= player.team ? 'You lost' : "You won"; 
+        $status.textContent = s.player.active >= player.team.length ? 'You lost' : "You won"; 
     }
 });
 
