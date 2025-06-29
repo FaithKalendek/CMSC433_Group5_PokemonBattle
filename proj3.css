@@ -1,0 +1,180 @@
+body {
+  font-family: Arial, sans-serif;
+  background: url('proj3_images/battle_backgrounds/gym_5.png') no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  color: #111;
+}
+
+/* Top banner. Used ChatGPT to aid in creating a cohesive color style in the next few functions + Ideas to improve visuals */
+header {
+  background-color: #111;
+  padding: 1rem;
+  border-bottom: 3px solid #444;
+}
+
+h1 {
+  margin: 0;
+  color: #eee;
+}
+
+/* Player setup box */
+#player-setup {
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin: 1rem auto;
+  border: 1px solid #ccc;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 10px;
+}
+
+/* Avatar image preview spacing */
+#avatar-preview img {
+  border: 2px solid #444;
+  border-radius: 10px;
+  background-color: white;
+  padding: 5px;
+}
+
+/* Main battle area layout */
+main#battle-screen {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  border: 4px solid #333;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 15px;
+  padding: 1rem;
+  width: 90%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Trainer containers for player and opponent */
+.trainer {
+  flex: 1 1 40%;
+  margin: 1rem;
+}
+
+/* Pokémon avatar */
+.trainer img {
+  width: 150px;
+  height: auto;
+  border: 2px solid #444;
+  border-radius: 10px;
+  animation: idle-bounce 2.5s ease-in-out infinite;
+}
+
+/* Flips opponent Pokémon to face player */
+.opponent img {
+  transform: scaleX(-1);
+}
+
+/* HP bar container */
+.hp-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #ccc;
+  border: 1px solid #333;
+  border-radius: 5px;
+  margin: 0.5rem auto;
+  overflow: hidden;
+}
+
+/* Filled portion of the HP bar */
+.hp-fill {
+  height: 100%;
+  width: 100%;
+  background-color: #4CAF50;
+}
+
+/* Attack button container */
+#action-panel {
+  flex-basis: 100%;
+  margin-top: 2rem;
+}
+
+/* attack buttons */
+.move-btn {
+  padding: 0.75rem 2rem;
+  margin: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 10px;
+  background: linear-gradient(to bottom, #eee, #bbb);
+  border: 3px solid #222;
+  color: #111;
+  text-shadow: none;
+  box-shadow: 0 4px #444;
+  cursor: pointer;
+  transition: all 0.2s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Used ChatGPT to walk me through creating visual effects for attack buttons */
+
+/* Glow effect on hover */
+.move-btn:hover {
+  background: linear-gradient(to bottom, #fff, #ccc);
+  box-shadow: 0 0 10px 2px rgba(255, 0, 0, 0.5);
+}
+
+/* Flashing highlight on click */
+.move-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 20px 4px rgba(255, 0, 0, 0.6) inset;
+}
+
+/* Pulse animation used on hover */
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5); }
+  70%  { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}
+
+/* Apply pulse overlay when hovering */
+.move-btn:hover::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 10px;
+  animation: pulse 1s infinite;
+  pointer-events: none;
+}
+
+/* Idle up-down bounce animation for Pokémon */
+@keyframes idle-bounce {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-12px); }
+  100% { transform: translateY(0); }
+}
+
+/* Status update box styling */
+#status-box {
+  margin-top: 2rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid #444;
+  padding: 1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #111;
+  width: 80%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 10px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* class to hide elements */
+.hidden {
+  display: none;
+}
