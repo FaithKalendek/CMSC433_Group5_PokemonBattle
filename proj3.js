@@ -12,10 +12,24 @@ export class GameState {
     #currentEnemy = { team: [], active: 0 };
 
 
-    start () { this.#setPhase(Phase.TITLE); }
+    start () { 
+        this.#setPhase(Phase.TITLE);
+        this.#dispatch();
+     }
     next() { this.#advanceGameState(); }
-
-
+    
+    #dispatch() {
+        document.dispatchEvent(
+            new CustomEvent('state', { detail: this.snapshot() })
+        );
+    }
+    snapshot() {
+        return {
+            phase : this.#phase,
+            player : this.#player,
+            enemy : this.#currentEnemy
+        }; 
+    }
 
 
 
@@ -32,6 +46,8 @@ export class GameState {
 
     async #startBattle() {
         this.#setPhase(Phase.BATTLE); 
+
+        this.#dispatch();
 
         // TODO: Api calls to start battle and get player / enemy team.
 
@@ -81,7 +97,7 @@ export class GameState {
 
     }
 
-    async #selectMove(moveId) {
+    async selectMove(moveId) {
         if (this.#phase !== Phase.BATTLE) return;
 
         // Set the player's choice to the move ID

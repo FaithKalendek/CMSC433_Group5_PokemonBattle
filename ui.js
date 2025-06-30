@@ -4,23 +4,29 @@ import { game, Phase } from './gamestate.js';
 // DOM elements 
 const $setup = document.getElementById('player-setup');
 const $battle = document.getElementById('battle-screen');
-const $status = document.getElementById('#status-box p');
+const $status = document.querySelector('#status-box p');
 const $playerHp = document.getElementById('player-hp');
 const $enemyHp = document.getElementById('opponent-hp');
-const moveButtons = document.querySelectorAll('.action-panel');
+const moveButtons = document.querySelectorAll('.move-btn');
 const $start = document.getElementById('start-game');
 const $avatar = document.getElementById('trainer-preview');
 
+const screens = {
+    [Phase.TITLE]: $setup,
+    [Phase.BATTLE]: $battle,
+    [Phase.RESULT]: $battle
+}; 
+
 // Show the initial section based on game state
 function show(section) {
-    $setup.classList.toggle('hidden', section !== Phase.TITLE);
-    $battle.classList.toggle('hidden', section !== Phase.BATTLE && section !== Phase.RESULT); 
+    Object.values(screens).forEach(el => el.classList.add('hidden'));
+    screens[section].classList.remove('hidden');
 }
 
 
 $start.onclick = () => { 
 
-    const name = document.getElementById('player-name').value || 'Player';
+    const name = document.getElementById('player-name').value || 'Ash';
 
     game.next();
 }; 
@@ -37,21 +43,26 @@ document.querySelectorAll('input[name="gender"]').forEach(r => {
 });
 
 // Changes width values of Hp bars and result message
-document.addEventListener('state', ({ detail:s}) => {
+document.addEventListener('state', ({ detail: s }) => {
     show(s.phase);
 
-    if (s.phase === Phase.BATTLE) {
-        const p = s.player.team[s.player.active];
-        const e = s.currentEnemy.team[s.currentEnemy.active];
-        $playerHp.style.width = `{(p.hp / p.maxHp) * 100}%`;
-        $enemyHp.style.width = `{(e.hp / e.maxHp) * 100}%`;
-        $status.textContent = `${p.name} vs ${e.name} HP ${e.hp}`;
+    switch (s.phase) {
+        case Phase.TITLE:
+            break;
 
-    }
+        case Phase.BATTLE:
+            const p = s.player.team[s.player.active];
+            const e = s.enemy.team[s.enemy.active];
+            document.getElementById('player-hp').style.width = `${(p.hp / p.maxHp) * 100}%`;
+            document.getElementById('opponent-hp').style.width = `${(e.hp / e.maxHp) * 100}%`;
+            document.querySelector('#status-box p').textContent = `${p.name} HP ${p.hp} vs ${e.name} HP ${e.hp}`;
+            break;
 
-    if (s.phase === Phase.RESULT) {
-        $status.textContent = s.player.active >= player.team.length ? 'You lost' : "You won"; 
-    }
+        case Phase.RESULT: 
+            // Change this later to display a results scredn where the player can pick one of the enemies pokemon, or the player receives a game over
+            document.querySelector('#status-box p').textContent = 'Game Over';
+            break;
+        }
 });
 
 // Calls the start of the game loop
