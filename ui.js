@@ -1,75 +1,64 @@
-// This file handles the UI interactions and updates based on game state
-import { game, Phase } from "./proj3.js";
 
-// DOM elements
-const $setup = document.getElementById("player-setup");
-const $battle = document.getElementById("battle-screen");
-const $status = document.querySelector("#status-box p");
+import { game, Phase } from "./proj3.js";
+import { Api } from "./api.js";
+
+
+/* ---------- DOM references ---------- */
+const $identityGrid = document.querySelector(".identity-selection");
+const $identitySum = document.getElementById("identity-summary");
+const $identityName = document.getElementById("identity-name");
+const $identityTxt = document.getElementById("identity-snippet");
+const $startBtn = document.getElementById("start-battle");
+const $pAvatar = document.getElementById("trainer-player-sprite");
+
 const $playerHp = document.getElementById("player-hp");
 const $enemyHp = document.getElementById("opponent-hp");
-const moveButtons = document.querySelectorAll(".move-btn");
-const $start = document.getElementById("start-game");
-const $avatar = document.getElementById("trainer-preview");
+const $statusTxt = document.querySelector("#status-box p");
 
-const screens = {
-  [Phase.TITLE]: $setup,
-  [Phase.BATTLE]: $battle,
-  [Phase.RESULT]: $battle,
-};
+const $battleScreen = document.getElementById("battle-screen");
+const $introScreen = document.getElementById("intro-screen");
+const $selectionBlock = document.getElementById("pokemon-selection");
+const $selectionGrid = document.getElementById("selection-grid");
+const $selectionMsg = document.getElementById("selection-message");
+const $selectionConf = document.getElementById("selection-confirmation");
+const $nextBattleBtn = document.getElementById("next-battle");
 
-// Show the initial section based on game state
-function show(section) {
-  Object.values(screens).forEach((el) => el.classList.add("hidden"));
-  screens[section].classList.remove("hidden");
-}
-
-// When start button is clicked, go to the battle phase (there will probably be more things here some I'm going to leave it like this for now)
-$start.onclick = () => {
-  const name = document.getElementById("player-name").value || "Ash";
-  game.next();
-};
-
-// Calls select move on the game object when a move button is clicked
-moveButtons.forEach((button, i) => (button.onclick = () => game.selectMove(i)));
-
-// Changes to sprite when the player comfirms gender
-document.querySelectorAll('input[name="gender"]').forEach((r) => {
-  r.onchange = () => {
-    $avatar.src =
-      r.value === "boy"
-        ? "proj3_images/boy.png" // Place boy png here
-        : "proj3_images/girl.png"; // place girl png here
-  };
+// When the player hits the start button, their identity is set and the game state changes to battle.
+$startBtn.addEventListener("click", () => {
+    game.addPlayer($identityName.value, $pAvatar.src)
+    game.next(); 
 });
 
-// Changes width values of Hp bars and result message
-document.addEventListener("state", ({ detail: s }) => {
-  show(s.phase);
+// attack button functionality with game logic
+document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
+  btn.addEventListener("click", () => {
+    game.selectMove(i);
+    game.next(); // runTurn()
+  })
+);
 
-  switch (s.phase) {
-    case Phase.TITLE:
-      break;
+// Used chat gpt to help make the player and enemy hp bars update.
+// Have to test this code when things are running
+document.addEventListener("state", ({ detail: snap }) => {
+  if (snap.phase === Phase.BATTLE) {
+    const p = snap.player.team[snap.player.active];
+    const e = snap.enemy.team[snap.enemy.active];
 
-    case Phase.BATTLE:
-      const p = s.player.team[s.player.active];
-      const e = s.enemy.team[s.enemy.active];
-      document.getElementById("player-hp").style.width = `${
-        (p.hp / p.hpMax) * 100
-      }%`;
-      document.getElementById("opponent-hp").style.width = `${
-        (e.hp / e.hpMax) * 100
-      }%`;
-      document.querySelector(
-        "#status-box p"
-      ).textContent = `${p.name} HP ${p.hp} vs ${e.name} HP ${e.hp}`;
-      break;
+    $playerHp.style.width = `${(p.hp / p.hpMax) * 100}%`;
+    $enemyHp.style.width = `${(e.hp / e.hpMax) * 100}%`;
+    $statusTxt.textContent = `${p.name} HP ${p.hp} vs ${e.name} HP ${e.hp}`;
+  }
 
-    case Phase.RESULT:
-      // Change this later to display a results scredn where the player can pick one of the enemies pokemon, or the player receives a game over
-      document.querySelector("#status-box p").textContent = "Game Over";
-      break;
+  if (snap.phase === Phase.RESULT) {
+    buildSelection(snap.enemy.team);
   }
 });
 
-// Calls the start of the game loop
+
+// continue button logic
+$nextBattleBtn.addEventListener("click", () => {
+    game.next(); 
+});
+
+// Starts the game state 
 game.start();
