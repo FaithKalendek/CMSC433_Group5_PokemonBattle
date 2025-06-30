@@ -36,7 +36,7 @@ moveButtons.forEach((button, i) => (button.onclick = () => game.selectMove(i)));
 document.querySelectorAll('input[name="gender"]').forEach((r) => {
   r.onchange = () => {
     $avatar.src =
-      r.value === "Boy"
+      r.value === "boy"
         ? "proj3_images/boy.png" // Place boy png here
         : "proj3_images/girl.png"; // place girl png here
   };
@@ -54,10 +54,10 @@ document.addEventListener("state", ({ detail: s }) => {
       const p = s.player.team[s.player.active];
       const e = s.enemy.team[s.enemy.active];
       document.getElementById("player-hp").style.width = `${
-        (p.hp / p.maxHp) * 100
+        (p.hp / p.hpMax) * 100
       }%`;
       document.getElementById("opponent-hp").style.width = `${
-        (e.hp / e.maxHp) * 100
+        (e.hp / e.hpMax) * 100
       }%`;
       document.querySelector(
         "#status-box p"
