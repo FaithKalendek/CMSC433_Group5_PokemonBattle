@@ -1,5 +1,4 @@
 
-import { Phase } from './gamestate.js';
 import { Api } from './api.js';
 
 // Gamestate class that helps determine the players game state amount other important loops in the game.
