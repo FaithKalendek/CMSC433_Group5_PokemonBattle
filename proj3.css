@@ -176,7 +176,5 @@ main#battle-screen {
 
 /* class to hide elements */
 .hidden {
-  /* change made by justin, !important allows elements to remain hidden even if they have a high priority
-  I have having problems with css not hiding elements that I wanted hidden, so I added this */
-  display: none !important;
+  display: none;
 }
