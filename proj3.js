@@ -1,7 +1,12 @@
 
-import { Phase } from './gamestate.js';
 import { Api } from './api.js';
 
+// Game states
+export const Phase = { 
+    TITLE : 'TITLE', 
+    BATTLE : 'BATTLE',
+    RESULT : 'RESULT'
+};
 // Gamestate class that helps determine the players game state amount other important loops in the game.
 export class GameState {
     // initialize the player's state to the title screen
@@ -127,7 +132,14 @@ export class GameState {
 
 
     // Sets the current game phase
-    #setPhase(phase) { this.#phase = phase; }
+    #setPhase(phase) { 
+        this.#phase = phase;
+        this.#dispatch();
+     }
 
 
 }
+
+
+// Export the GameState class
+export const game = new GameState();
