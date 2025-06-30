@@ -8,15 +8,32 @@ export class GameState {
     // Set player's starting team to null and active pokemon to null alongside the player's active choice
     // Set the current enemy's team to null and active pokemon to 0
     #phase = Phase.TITLE;
-    #player = { team: [], active: 0, choice: null };
+    #player = { team: [], active: 0, choice: null, playerRank : 0};
     #currentEnemy = { team: [], active: 0 };
 
 
+    // Sets the gamestate to title
     start () { 
         this.#setPhase(Phase.TITLE);
         this.#dispatch();
      }
+
+     // function to advance the game state
     next() { this.#advanceGameState(); }
+
+    // Function to select a move for the player
+    selectMove(index) {
+        if (this.#phase === Phase.BATTLE) 
+            this.#player.choice = index;
+    }
+    // Function to give current state of the game
+    snapshot() {
+        return {
+            phase: this.#phase,
+            player: this.#player,
+            enemy: this.#currentEnemy
+        };
+    }
     
     #dispatch() {
         document.dispatchEvent(
@@ -46,6 +63,7 @@ export class GameState {
 
     async #startBattle() {
         this.#setPhase(Phase.BATTLE); 
+
 
         this.#dispatch();
 
