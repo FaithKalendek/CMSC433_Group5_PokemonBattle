@@ -7,53 +7,121 @@
 </head>
 <body>
 
-<!-- banner with title -->
-<header>
-  <h1>Pokémon Battle</h1>
-</header>
+  <!-- Banner -->
+  <header>
+    <h1>Pokémon Battle</h1>
+  </header>
 
-<!-- Player setup screen -->
-<section id="player-setup">
-  <label for="player-name">Enter Your Name:</label>
-  <input type="text" id="player-name" placeholder="Ash">
+  <!-- Intro/Identity Selection Screen. Story content helped developed by AI -->
+  <section id="intro-screen">
+    <div class="text-box intro-narrative">
+      <h2>Welcome to the Indigo Training Program</h2>
+      <p>
+        You’ve officially joined the Indigo Training Program—an experimental new format for rookie trainers. 
+        No travel. No gyms. Just back-to-back battles in a controlled environment designed to sharpen your instincts and test your adaptability.
+      </p>
+      <p>
+        You’ll start with a single Pokémon and face off against a lone opponent. Each victory lets you capture one of their Pokémon to add to your team. 
+        From there, battles get tougher—your team grows, but so does theirs.
+      </p>
+      <p>
+        There’s no leveling, no items, and no second chances. Just you, your team, and a series of unpredictable matchups.
+        Moves and opponents are randomized, so there's no one strategy that wins it all—you’ll have to adapt and make do with what you’ve got.
+      </p>
+      <p class="emphasis">
+        Defeat all 10 opponents, and you'll graduate the program with top honors. Fail... and you'll start again from scratch.
+      </p>
+      <p class="question">
+        So, what kind of trainer will you be?
+      </p>
+    </div>
 
-  <p>Are you a boy? Or are you a girl?</p>
-  <label>
-    <input type="radio" name="gender" value="boy" checked>
-    Boy
-  </label>
-  <label>
-    <input type="radio" name="gender" value="girl">
-    Girl
-  </label>
+    <!-- Identity Selection -->
+    <div class="identity-selection">
+      <h3 style="text-align:center;">Choose Your Identity</h3>
+      <div class="identity-grid">
+        <!-- Ambitious Rookie -->
+        <div class="identity-card" data-identity="rookie">
+          <img src="proj3_images/avatars/rookie.png" alt="Ambitious Rookie">
+          <h4>The Ambitious Rookie</h4>
+          <div class="text-box">
+            <p class="blurb">
+              You're bold, driven, and hungry to prove yourself. The world of Pokémon is waiting—and you're not wasting any time.
+            </p>
+          </div>
+          <button class="select-identity">Choose</button>
+        </div>
 
-  <!-- Shows trainer sprite based on selection -->
-  <div id="avatar-preview">
-    <p>Your Trainer:</p>
-    <img id="trainer-preview" src="proj3_images/user_sprite/boy.png" alt="Trainer Preview" width="100">
-  </div>
+        <!-- Curious Scholar -->
+        <div class="identity-card" data-identity="scholar">
+          <img src="proj3_images/avatars/scholar.png" alt="Curious Scholar">
+          <h4>The Curious Scholar</h4>
+          <div class="text-box">
+            <p class="blurb">
+              You love knowing how things work—from Pokémon evolution to battle mechanics. It’s not just about strength; it’s about understanding.
+            </p>
+          </div>
+          <button class="select-identity">Choose</button>
+        </div>
 
-  <button id="start-game">Start Game</button>
-</section>
+        <!-- Wild Wanderer -->
+        <div class="identity-card" data-identity="wanderer">
+          <img src="proj3_images/avatars/wanderer.png" alt="Wild Wanderer">
+          <h4>The Wild Wanderer</h4>
+          <div class="text-box">
+            <p class="blurb">
+              You feel most at home outdoors, surrounded by nature. You and Pokémon? You’ve always spoken the same language.
+            </p>
+          </div>
+          <button class="select-identity">Choose</button>
+        </div>
 
-<!-- Main battle screen -->
+        <!-- Joyful Beginner -->
+        <div class="identity-card" data-identity="beginner">
+          <img src="proj3_images/avatars/beginner.png" alt="Joyful Beginner">
+          <h4>The Joyful Beginner</h4>
+          <div class="text-box">
+            <p class="blurb">
+              You’re just getting started, but your love for Pokémon is already shining bright. And that’s what really matters.
+            </p>
+          </div>
+          <button class="select-identity">Choose</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Identity Summary -->
+    <div id="identity-summary" class="hidden text-box">
+      <h3>You Chose:</h3>
+      <h4 id="identity-name">The Ambitious Rookie</h4>
+      <p id="identity-snippet"></p>
+      <button id="start-battle">Start Your Journey</button>
+    </div>
+  </section>
+
+  <!-- Main Battle Screen -->
 <main id="battle-screen" class="hidden">
-
-  <!-- Player's side -->
-  <div class="trainer player">
-    <img id="player-avatar" src="proj3_images/1st Generation/004Charmander.png" alt="Player Avatar">
-    <h2 id="player-name-display">Player</h2>
-    <div class="hp-bar"><div class="hp-fill" id="player-hp"></div></div>
+  <!-- Player's Side -->
+  <div class="trainer-side player-side">
+    <img class="trainer-sprite" id="player-trainer-sprite" src="proj3_images/avatars/scholar.png" alt="Player Trainer">
+    <div class="trainer">
+      <img id="player-avatar" src="proj3_images/1st Generation/004Charmander.png" alt="Player Avatar">
+      <h2 id="player-name-display">Player</h2>
+      <div class="hp-bar"><div class="hp-fill" id="player-hp"></div></div>
+    </div>
   </div>
 
-  <!-- Opponent's side -->
-  <div class="trainer opponent">
-    <img id="opponent-avatar" src="proj3_images/1st Generation/007Squirtle.png" alt="Opponent Avatar">
-    <h2>Opponent</h2>
-    <div class="hp-bar"><div class="hp-fill" id="opponent-hp"></div></div>
+  <!-- Opponent's Side -->
+  <div class="trainer-side opponent-side">
+    <div class="trainer">
+      <img id="opponent-avatar" src="proj3_images/1st Generation/007Squirtle.png" alt="Opponent Avatar">
+      <h2>Opponent</h2>
+      <div class="hp-bar"><div class="hp-fill" id="opponent-hp"></div></div>
+    </div>
+    <img class="trainer-sprite" id="opponent-trainer-sprite" src="proj3_images/opponent_sprite/n.png" alt="Opponent Trainer">
   </div>
 
-  <!-- Attack buttons for player actions -->
+  <!-- Attack Buttons -->
   <section id="action-panel">
     <button class="move-btn">Attack 1</button>
     <button class="move-btn">Attack 2</button>
@@ -61,11 +129,104 @@
     <button class="move-btn">Attack 4</button>
   </section>
 
-  <!-- Area to show status updates during the battle -->
+  <!-- Status Updates -->
   <section id="status-box">
-    <p>Welcome to Pokemon Battle!</p>
+    <p>Welcome to Pokémon Battle!</p>
+  </section>
+</main>
+
+
+  <!-- Pokémon Selection Screen -->
+  <section id="pokemon-selection" class="hidden">
+    <div class="text-box">
+      <h2>Victory!</h2>
+      <p>You defeated your opponent! Choose one of their Pokémon to add to your team:</p>
+    </div>
+
+    <div id="selection-grid" class="selection-grid"></div>
+
+    <div id="selection-confirmation" class="hidden text-box">
+      <p id="selection-message"></p>
+      <button id="next-battle">Continue to Next Battle</button>
+    </div>
   </section>
 
-</main>
+  <!-- JavaScript -->
+  <script>
+    // Identity story blurbs for each trainer
+    const identitySnippets = {
+      rookie: "You’ve always wanted more than a quiet life in a small town. Watching championship matches lit a fire in you that never went out. Now you’ve enrolled in the Indigo Training Program, determined to stand out from the crowd. You won’t just be another rookie—you’ll be the one they remember.",
+      scholar: "Your bookshelf is lined with Pokédexes and field notes. You’ve spent years studying how Pokémon behave, how trainers think, and what makes a strategy stick. Now it's time to apply that knowledge in real battle conditions. The Training Program is your first live experiment—and you're ready to learn everything.",
+      wanderer: "Raised among forests and rivers, Pokémon were your childhood playmates before they were ever called “partners.” The Training Program is your first step into a more structured journey—but you haven’t forgotten your roots. You're here to prove that instinct, heart, and harmony still have a place in battle.",
+      beginner: "Some people say beginners are easy to beat. Let them. You’re not here to impress anyone—you’re here to learn, to grow, and to enjoy every moment alongside your Pokémon. The Training Program may be tough, but your excitement is unstoppable. Even your opponents can’t help but smile when you enter the arena."
+    };
+
+    // Choosing identity
+    document.querySelectorAll('.select-identity').forEach(button => {
+      button.addEventListener('click', () => {
+        const card = button.closest('.identity-card');
+        const identityKey = card.dataset.identity;
+        const identityName = card.querySelector('h4').textContent;
+
+        document.getElementById('identity-name').textContent = identityName;
+        document.getElementById('identity-snippet').textContent = identitySnippets[identityKey];
+
+        document.querySelector('.identity-selection').style.display = 'none';
+        document.getElementById('identity-summary').classList.remove('hidden');
+        window.selectedIdentity = identityKey;
+      });
+    });
+	
+    // Go to battle screen
+    document.getElementById('start-battle').addEventListener('click', () => {
+      document.getElementById('intro-screen').classList.add('hidden');
+      document.getElementById('battle-screen').classList.remove('hidden');
+    });
+
+    const defeatedPokemon = [
+      { name: "Zubat", sprite: "proj3_images/1st Generation/041Zubat.png" },
+      { name: "Oddish", sprite: "proj3_images/1st Generation/043Oddish.png" },
+      { name: "Diglett", sprite: "proj3_images/1st Generation/050Diglett.png" }
+    ];
+
+    // Selection Screen. Choosing Pokemon from defeated trainer
+    function showPokemonSelectionScreen() {
+      document.getElementById('battle-screen').classList.add('hidden');
+      document.getElementById('pokemon-selection').classList.remove('hidden');
+
+      const grid = document.getElementById('selection-grid');
+      grid.innerHTML = '';
+
+      defeatedPokemon.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'pokemon-card';
+        card.dataset.name = p.name;
+
+        card.innerHTML = `
+          <img src="${p.sprite}" alt="${p.name}">
+          <h4>${p.name}</h4>
+          <button class="select-pokemon">Choose</button>
+        `;
+
+        grid.appendChild(card);
+      });
+
+      document.querySelectorAll('.select-pokemon').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const chosen = btn.closest('.pokemon-card').dataset.name;
+          document.getElementById('selection-message').textContent = `You chose ${chosen}! Great choice.`;
+          document.getElementById('selection-confirmation').classList.remove('hidden');
+        });
+      });
+    }
+
+    // Go to next battle
+    document.getElementById('next-battle').addEventListener('click', () => {
+      document.getElementById('pokemon-selection').classList.add('hidden');
+      document.getElementById('battle-screen').classList.remove('hidden');
+      document.getElementById('selection-confirmation').classList.add('hidden');
+    });
+  </script>
+
 </body>
 </html>
