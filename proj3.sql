@@ -30,16 +30,16 @@ CREATE TABLE IF NOT EXISTS Opponents (
 
 -- Put a bunch of opponents in here for the player to battle against
 INSERT INTO Opponents (name, avatar_url) VALUES
-('Professor Oak', 'images/professor_oak.png'),
-('Brock', 'images/brock.png'),
-('Misty', 'images/misty.png'),
-('Team Rocket', 'images/team_rocket.png'),
-('Elite Four', 'images/elite_four.png'),
-('Champion', 'images/champion.png'),
-('Gym Leader', 'images/gym_leader.png'),
-('Rival', 'images/rival.png'),
-('Legendary Trainer', 'images/legendary_trainer.png'),
-('Mystery Opponent', 'images/mystery_opponent.png');
+('Youngster Joey', 'images/youngster.png'),
+('Lass Ellie', 'images/lass.png'),
+('PokéManiac Brent', 'images/pokemaniac.png'),
+('Ace Trainer Chad', 'images/acetrainerchad.png'),
+('Ace Trainer Quinn', 'images/acetrainerquinn.png'),
+('Lt. Surge', 'images/ltsurge.png'),
+('Team Rocket', 'images/teamrocket.png'),
+('Gym Leader Brock', 'images/brock.png'),
+('Gym Leader Misty', 'images/misty.png'),
+('Champion Blue', 'images/championblue.png');
 
 -- Create table for Pokemon
 CREATE TABLE IF NOT EXISTS Pokemon (
