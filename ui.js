@@ -23,11 +23,9 @@ function show(section) {
     screens[section].classList.remove('hidden');
 }
 
-
+// When start button is clicked, go to the battle phase (there will probably be more things here some I'm going to leave it like this for now)
 $start.onclick = () => { 
-
     const name = document.getElementById('player-name').value || 'Ash';
-
     game.next();
 }; 
 
