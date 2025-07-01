@@ -1,7 +1,5 @@
-
 import { game, Phase } from "./proj3.js";
 import { Api } from "./api.js";
-
 
 /* ---------- DOM references ---------- */
 const $identityGrid = document.querySelector(".identity-selection");
@@ -22,7 +20,7 @@ const $selectionGrid = document.getElementById("selection-grid");
 const $selectionMsg = document.getElementById("selection-message");
 const $selectionConf = document.getElementById("selection-confirmation");
 const $nextBattleBtn = document.getElementById("next-battle");
-const moveBtns = [...ducument.querySelectorAll("#action-panel .move-btn")];
+const moveBtns = [...document.querySelectorAll("#action-panel .move-btn")];
 
 const moveCache = new Map(); // Cache for moves to avoid multiple API calls
 
@@ -37,7 +35,9 @@ async function getMoveName(id) {
 }
 
 async function renderMoves(pokemon) {
+  console.log("Didn't pass check");
   if (!pokemon) return;
+  console.log("Passed check");
 
   // we expect pokemon.move_ids like [13, 85] (two moves)
   const ids = pokemon.move_ids || [];
@@ -58,13 +58,12 @@ async function renderMoves(pokemon) {
   );
 }
 
-
 // When the player hits the start button, their identity is set and the game state changes to battle.
 $startBtn.addEventListener("click", () => {
-    const name = $identityName.textContent.trim();
-    const avatarUrl = $pAvatar.src; 
-    // calls api to add player to the database and stores data in the gamestate
-    game.addPlayer(name, avatarUrl);
+  const name = $identityName.textContent.trim();
+  const avatarUrl = $pAvatar.src;
+  // calls api to add player to the database and stores data in the gamestate
+  game.addPlayer(name, avatarUrl);
 });
 
 // attack button functionality with game logic
@@ -80,7 +79,7 @@ document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
 document.addEventListener("statechange", ({ detail: snap }) => {
   if (snap.phase === Phase.BATTLE) {
     const p = snap.player.team[snap.player.active];
-    const e = snap.enemy.team[snap.currentEnemy.active];
+    const e = snap.currentEnemy.team[snap.currentEnemy.active];
 
     $playerHp.style.width = `${(p.current_hp / p.max_hp) * 100}%`;
     $enemyHp.style.width = `${(e.current_hp / e.max_hp) * 100}%`;
@@ -94,11 +93,10 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   }
 });
 
-
 // continue button logic
 $nextBattleBtn.addEventListener("click", () => {
-    game.next(); 
+  game.next();
 });
 
-// Starts the game state 
+// Starts the game state
 game.start();

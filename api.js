@@ -3,29 +3,25 @@
 
 const BASE = "http://localhost/CMSC433_Group5_PokemonBattle/api";
 
-// Request function for api calls
-// returns response as json object or returns error message
-// Used chat gpt to help with this getter function
-/*  try-json-else-text helper  */
 function tryParse(text) {
-  // Happy-path: valid JSON
   try {
     return JSON.parse(text);
   } catch {}
 
-  // Common case here:   {...}{...}{...}
-  const glued = text.replace(/}\s*{/g, "},{"); // "}{" → "},{"
+  // Handle “}{” → “},{”
+  const glued = text.replace(/}\s*{/g, "},{");
   try {
     return JSON.parse("[" + glued + "]");
-  } catch {
-    // wrap in [...]
-    /* fall through */
-  }
+  } catch {}
 
-  // Fallback – give raw string back
   return text;
 }
 
+/**
+ * Low-level request helper.
+ * Always does GET, attaches params as query-string.
+ * Parses text, normalizes single objects into [object].
+ */
 export async function request(path, params = {}) {
   const url = `${BASE}/${path}?${new URLSearchParams(params)}`;
   const res = await fetch(url);
@@ -35,20 +31,30 @@ export async function request(path, params = {}) {
     const txt = await res.text();
     throw new Error(`API ${path} failed: ${res.status} ${txt || "No body"}`);
   }
-  return tryParse(await res.text());
-}
 
+  // parse whatever comes back
+  let data = tryParse(await res.text());
+
+  // **Normalize single-object → single-element array**
+  if (data !== null && typeof data === "object" && !Array.isArray(data)) {
+    data = [data];
+  }
+
+  return data;
+}
 // Api object
 export const Api = {
   // Read functions
-  getPokemon: (id = null) => request(`get_pokemon.php${id ? `?id=${id}` : ""}`),
-  getMove: (move_id) => request(`get_move.php?id=${move_id}`),
+  getPokemon: (id = null) =>
+    request(`get_pokemon.php${pokemon_id ? `?id=${pokemon_id}` : ""}`),
+  getMove: (move_id) => request(`get_move.php?move_id=${move_id}`),
 
   // Write / Actions
   addPlayer: (player_name, avatar_url) =>
-    request("add_player.php", { player_name, avatar_url }).then(
-      (r) => r.player_id
-    ),
+    request("add_player.php", { player_name, avatar_url }).then((r) => {
+      const single = r.length > 0 ? r[0] : r;
+      return single.player_id;
+    }),
   addToTeam: (playerId, pokemonId) =>
     request("add_to_team.php", { playerId, pokemonId }),
   clearTeam: (playerId) => request("clear_player_team.php", { playerId }),
