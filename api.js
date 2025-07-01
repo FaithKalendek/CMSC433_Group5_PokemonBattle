@@ -13,15 +13,21 @@ async function request(path, data = null) {
     }
     : {};
     
-    // fetch call to api
-    const response = await fetch(`${BASE}/${path}`, opts);
-    // error handling
-    if (!response.ok) {
-        const msg = await response.text();
-        throw new error(`API ${path} failed... ${response.status} ${msg}`); 
+    try {
+        const response = await fetch(`${BASE}/${path}`, opts);
+
+        if (!response.ok) {
+            const message = await response.text();
+            throw new Error(`Error ${response.status}: ${message}`);
+        }
+        return await response.json();
+
+    } catch (error) {
+        console.error(`API request failed: ${error.message}`);
+        return { error: error.message };
     }
-    return response.json(); 
 }
+
 
 // Api object 
 export const Api = {
@@ -31,7 +37,7 @@ export const Api = {
     getMove : (id) => request(`get_move.php?id=${id}`), 
 
     // Write / Actions
-    addPlayer : (name) => request('add_player.php', { name }), 
+    addPlayer : (player_name, avatar_url) => request('add_player.php', { player_name, avatar_url }), 
     addToTeam : (playerId, pokemonId) => request('add_to_team.php', { playerId, pokemonId}), 
     clearTeam : (playerId) => request('clear_player_team.php', { playerId }),
     genRandomTeam : ( pokemonNum, team, playerId) => request('generate_random_team.php', { pokemonNum, team, playerId }),

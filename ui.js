@@ -9,7 +9,7 @@ const $identitySum = document.getElementById("identity-summary");
 const $identityName = document.getElementById("identity-name");
 const $identityTxt = document.getElementById("identity-snippet");
 const $startBtn = document.getElementById("start-battle");
-const $pAvatar = document.getElementById("trainer-player-sprite");
+const $pAvatar = document.getElementById("player-trainer-sprite");
 
 const $playerHp = document.getElementById("player-hp");
 const $enemyHp = document.getElementById("opponent-hp");
@@ -25,7 +25,9 @@ const $nextBattleBtn = document.getElementById("next-battle");
 
 // When the player hits the start button, their identity is set and the game state changes to battle.
 $startBtn.addEventListener("click", () => {
-    game.addPlayer($identityName.value, $pAvatar.src)
+    const name = $identityName.textContent.trim();
+    const avatarUrl = $pAvatar.src; 
+    game.addPlayer(name, avatarUrl);
     game.next(); 
 });
 

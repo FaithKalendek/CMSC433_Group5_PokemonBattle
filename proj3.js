@@ -47,6 +47,27 @@ export class GameState {
     };
   }
 
+
+  addPlayer(name, avatarUrl) {
+    this.#player.name = name;
+    if (!avatarUrl) {
+        avatarUrl = " ";
+    }
+    else {
+        // Validate the avatar URL
+        try {
+            new URL(avatarUrl);
+        } catch (e) {
+            console.error("Invalid avatar URL:", avatarUrl);
+            avatarUrl = " "; // Fallback to a default avatar
+    }
+    this.#player.avatarUrl = avatarUrl;
+    console.log(`Player added: ${name} with avatar ${avatarUrl}`);
+    Api.addPlayer(name, avatarUrl); 
+    this.#dispatch();
+  }
+}
+
   #advanceGameState() {
     switch (this.#phase) {
       case Phase.TITLE:
@@ -63,6 +84,8 @@ export class GameState {
   async #startBattle() {
     this.#setPhase(Phase.BATTLE);
     console.log("Starting battle...");
+
+    this.#dispatch();
     // TODO: Api calls to start battle and get player / enemy team.
   }
 
@@ -106,9 +129,20 @@ export class GameState {
     this.#player.choice = null;
   }
 
+  // Select move logic
+  async selectMove(moveIndex) {
+    if (this.#phase !== Phase.BATTLE) return;
+    
+    // set player choice to the move index
+    this.#player.choice = moveIndex;
+    // calls run turn
+    this.next(); 
+  }
+
   // Sets the current game phase
   #setPhase(phase) {
-    this.#phase = p;
+    this.#phase = phase;
+    this.#dispatch();
   }
 }
 
