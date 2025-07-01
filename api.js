@@ -1,7 +1,7 @@
 // This is an api wrapper so that I don't have to edit fetch states each time there is a change to them
 // import { Api } from './api.js'; 
 
-const BASE = "http://localhost/CMSC433_Group5/PokemonBattle/api";
+const BASE = "http://localhost/CMSC433_Group5_PokemonBattle-main/api";
 
 // Request function for api calls
 // returns response as json object or returns error message
