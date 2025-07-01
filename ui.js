@@ -22,6 +22,42 @@ const $selectionGrid = document.getElementById("selection-grid");
 const $selectionMsg = document.getElementById("selection-message");
 const $selectionConf = document.getElementById("selection-confirmation");
 const $nextBattleBtn = document.getElementById("next-battle");
+const moveBtns = [...ducument.querySelectorAll("#action-panel .move-btn")];
+
+const moveCache = new Map(); // Cache for moves to avoid multiple API calls
+
+async function getMoveName(id) {
+  if (moveCache.has(id)) {
+    return moveCache.get(id).name;
+  }
+
+  const data = await Api.getMove(id);
+  moveCache.set(id, data);
+  return data.name;
+}
+
+async function renderMoves(pokemon) {
+  if (!pokemon) return;
+
+  // we expect pokemon.move_ids like [13, 85] (two moves)
+  const ids = pokemon.move_ids || [];
+
+  // loop over the 2 buttons you have in HTML
+  await Promise.all(
+    moveBtns.map(async (btn, i) => {
+      if (ids[i] !== undefined) {
+        btn.disabled = false;
+        btn.dataset.moveId = ids[i]; // keep id for click
+        btn.textContent = await getMoveName(ids[i]);
+      } else {
+        btn.disabled = true;
+        btn.textContent = "—";
+        delete btn.dataset.moveId;
+      }
+    })
+  );
+}
+
 
 // When the player hits the start button, their identity is set and the game state changes to battle.
 $startBtn.addEventListener("click", () => {
@@ -49,6 +85,8 @@ document.addEventListener("state", ({ detail: snap }) => {
     $playerHp.style.width = `${(p.hp / p.hpMax) * 100}%`;
     $enemyHp.style.width = `${(e.hp / e.hpMax) * 100}%`;
     $statusTxt.textContent = `${p.name} HP ${p.hp} vs ${e.name} HP ${e.hp}`;
+    const active = snap.player.team[snap.player.active];
+    renderMoves(active);
   }
 
   if (snap.phase === Phase.RESULT) {
