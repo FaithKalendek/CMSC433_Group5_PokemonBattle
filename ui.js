@@ -1,7 +1,5 @@
-
 import { game, Phase } from "./proj3.js";
 import { Api } from "./api.js";
-
 
 /* ---------- DOM references ---------- */
 const $identityGrid = document.querySelector(".identity-selection");
@@ -22,14 +20,50 @@ const $selectionGrid = document.getElementById("selection-grid");
 const $selectionMsg = document.getElementById("selection-message");
 const $selectionConf = document.getElementById("selection-confirmation");
 const $nextBattleBtn = document.getElementById("next-battle");
+const moveBtns = [...document.querySelectorAll("#action-panel .move-btn")];
+
+const moveCache = new Map(); // Cache for moves to avoid multiple API calls
+
+async function getMoveName(id) {
+  if (moveCache.has(id)) {
+    return moveCache.get(id).name;
+  }
+
+  const data = await Api.getMove(id);
+  moveCache.set(id, data);
+  return data.name;
+}
+
+async function renderMoves(pokemon) {
+  console.log("Didn't pass check");
+  if (!pokemon) return;
+  console.log("Passed check");
+
+  // we expect pokemon.move_ids like [13, 85] (two moves)
+  const ids = pokemon.move_ids || [];
+
+  // loop over the 2 buttons you have in HTML
+  await Promise.all(
+    moveBtns.map(async (btn, i) => {
+      if (ids[i] !== undefined) {
+        btn.disabled = false;
+        btn.dataset.moveId = ids[i]; // keep id for click
+        btn.textContent = await getMoveName(ids[i]);
+      } else {
+        btn.disabled = true;
+        btn.textContent = "—";
+        delete btn.dataset.moveId;
+      }
+    })
+  );
+}
 
 // When the player hits the start button, their identity is set and the game state changes to battle.
 $startBtn.addEventListener("click", () => {
-    const name = $identityName.textContent.trim();
-    const avatarUrl = $pAvatar.src; 
-    // calls api to add player to the database and stores data in the gamestate
-    game.addPlayer(name, avatarUrl);
-    game.next(); 
+  const name = $identityName.textContent.trim();
+  const avatarUrl = $pAvatar.src;
+  // calls api to add player to the database and stores data in the gamestate
+  game.addPlayer(name, avatarUrl);
 });
 
 // attack button functionality with game logic
@@ -42,26 +76,27 @@ document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
 
 // Used chat gpt to help make the player and enemy hp bars update.
 // Have to test this code when things are running
-document.addEventListener("state", ({ detail: snap }) => {
+document.addEventListener("statechange", ({ detail: snap }) => {
   if (snap.phase === Phase.BATTLE) {
     const p = snap.player.team[snap.player.active];
-    const e = snap.enemy.team[snap.enemy.active];
+    const e = snap.currentEnemy.team[snap.currentEnemy.active];
 
-    $playerHp.style.width = `${(p.hp / p.hpMax) * 100}%`;
-    $enemyHp.style.width = `${(e.hp / e.hpMax) * 100}%`;
-    $statusTxt.textContent = `${p.name} HP ${p.hp} vs ${e.name} HP ${e.hp}`;
+    $playerHp.style.width = `${(p.current_hp / p.max_hp) * 100}%`;
+    $enemyHp.style.width = `${(e.current_hp / e.max_hp) * 100}%`;
+    $statusTxt.textContent = `${p.name} HP ${p.current_hp} vs ${e.name} HP ${e.current_hp}`;
+    const active = snap.player.team[snap.player.active];
+    renderMoves(active);
   }
 
   if (snap.phase === Phase.RESULT) {
-    buildSelection(snap.enemy.team);
+    buildSelection(snap.currentEnemy.team);
   }
 });
 
-
 // continue button logic
 $nextBattleBtn.addEventListener("click", () => {
-    game.next(); 
+  game.next();
 });
 
-// Starts the game state 
+// Starts the game state
 game.start();
