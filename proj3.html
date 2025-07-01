@@ -125,17 +125,23 @@
   <section id="action-panel">
     <button class="move-btn">Attack 1</button>
     <button class="move-btn">Attack 2</button>
-    <button class="move-btn">Attack 3</button>
-    <button class="move-btn">Attack 4</button>
   </section>
 
   <!-- Status Updates -->
   <section id="status-box">
     <p>Welcome to Pokémon Battle!</p>
   </section>
+
+  <!-- Pokémon Switch Panel -->
+<section id="switch-panel" class="hidden">
+  <h3>Switch Pokémon</h3>
+  <div class="team-roster" id="team-roster">
+    <!-- Pokémon buttons will be inserted here dynamically -->
+  </div>
+</section>
+
 </main>
-
-
+  
   <!-- Pokémon Selection Screen -->
   <section id="pokemon-selection" class="hidden">
     <div class="text-box">
@@ -226,6 +232,40 @@
       document.getElementById('battle-screen').classList.remove('hidden');
       document.getElementById('selection-confirmation').classList.add('hidden');
     });
+// Example team with up to 6 Pokémon
+const playerTeam = [
+  { name: "Charmander" },
+  { name: "Bulbasaur" },
+  { name: "Pidgey" }
+];
+
+function renderSwitchPanel(activeIndex = 0) {
+  const container = document.getElementById("team-roster");
+  container.innerHTML = "";
+
+  playerTeam.forEach((poke, i) => {
+    const btn = document.createElement("button");
+    btn.className = "switch-btn";
+    btn.textContent = poke.name;
+
+    // Disable the button if it's already active
+    if (i === activeIndex) {
+      btn.disabled = true;
+      btn.style.opacity = "0.5";
+    }
+
+    btn.addEventListener("click", () => {
+      console.log(`Switching to: ${poke.name}`);
+      // Call switch logic here 
+    });
+
+    container.appendChild(btn);
+  });
+
+  // Show the panel
+  document.getElementById("switch-panel").classList.remove("hidden");
+}
+
   </script>
 <script type="module" src="ui.js"></script>
 </body>
