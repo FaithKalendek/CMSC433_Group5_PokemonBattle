@@ -1,7 +1,7 @@
 // This is an api wrapper so that I don't have to edit fetch states each time there is a change to them
 // import { Api } from './api.js'; 
 
-const BASE = "http://localhost/CMSC433_Group5_PokemonBattle-main/api";
+const BASE = "http://localhost/CMSC433_Group5_PokemonBattle/api";
 
 // Request function for api calls
 // returns response as json object or returns error message
@@ -34,7 +34,7 @@ export const Api = {
     addPlayer : (player_name, avatar_url) => request('add_player.php', { player_name, avatar_url }), 
     addToTeam : (playerId, pokemonId) => request('add_to_team.php', { playerId, pokemonId}), 
     clearTeam : (playerId) => request('clear_player_team.php', { playerId }),
-    genRandomTeam : ( pokemonNum, team, playerId) => request('generate_random_team.php', { pokemonNum, team, playerId }),
+    genRandomTeam : ( num_pokemon, team, character_id) => request('generate_random_team.php', { num_pokemon, team, character_id }),
     turnOrder : (playerPokemonId, enemyPokemonId) => request('calculate_turn_order.php', { playerPokemonId, enemyPokemonId }),
     attack : (attackerId, defenderId, moveName) => request('calculate_attack.php', { attackerId, defenderId, moveName }),
     pickRandomMove : (pokemonId) => request('pick_random_move.php', { pokemonId }),
