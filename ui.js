@@ -30,8 +30,9 @@ async function getMoveName(id) {
   }
 
   const data = await Api.getMove(id);
-  moveCache.set(id, data);
-  return data.name;
+  const move = Array.isArray(data) ? data[0] : data;
+  moveCache.set(id, move);
+  return move.name;
 }
 
 async function renderMoves(pokemon) {
@@ -69,8 +70,12 @@ $startBtn.addEventListener("click", () => {
 // attack button functionality with game logic
 document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
   btn.addEventListener("click", () => {
+
+    // If the button is disabled or the game is not in battle phase, do nothing
+    if (btn.disabled || game.snapshot().phase !== Phase.BATTLE) return;
+
+    // Get the move Id and go to the game state
     game.selectMove(i);
-    game.next(); // runTurn()
   })
 );
 
