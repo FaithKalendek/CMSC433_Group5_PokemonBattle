@@ -63,7 +63,7 @@ export class GameState {
     }
     this.#player.avatarUrl = avatarUrl;
     console.log(`Player added: ${name} with avatar ${avatarUrl}`);
-    Api.addPlayer(name, avatarUrl); 
+    Api.addPlayer(name, avatarUrl).then(() => console.log("Player added to the server.")).catch(err => console.error("Error adding player to server:", err));
     this.#dispatch();
   }
 }
