@@ -77,20 +77,20 @@ document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
 
 // Used chat gpt to help make the player and enemy hp bars update.
 // Have to test this code when things are running
-document.addEventListener("state", ({ detail: snap }) => {
+document.addEventListener("statechange", ({ detail: snap }) => {
   if (snap.phase === Phase.BATTLE) {
     const p = snap.player.team[snap.player.active];
-    const e = snap.enemy.team[snap.enemy.active];
+    const e = snap.enemy.team[snap.currentEnemy.active];
 
-    $playerHp.style.width = `${(p.hp / p.hpMax) * 100}%`;
-    $enemyHp.style.width = `${(e.hp / e.hpMax) * 100}%`;
-    $statusTxt.textContent = `${p.name} HP ${p.hp} vs ${e.name} HP ${e.hp}`;
+    $playerHp.style.width = `${(p.current_hp / p.max_hp) * 100}%`;
+    $enemyHp.style.width = `${(e.current_hp / e.max_hp) * 100}%`;
+    $statusTxt.textContent = `${p.name} HP ${p.current_hp} vs ${e.name} HP ${e.current_hp}`;
     const active = snap.player.team[snap.player.active];
     renderMoves(active);
   }
 
   if (snap.phase === Phase.RESULT) {
-    buildSelection(snap.enemy.team);
+    buildSelection(snap.currentEnemy.team);
   }
 });
 
