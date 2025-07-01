@@ -1,31 +1,25 @@
 // This is an api wrapper so that I don't have to edit fetch states each time there is a change to them
 // import { Api } from './api.js'; 
 
-const BASE = "/api";
+const BASE = "http://localhost/CMSC433_Group5/PokemonBattle/api";
 
 // Request function for api calls
 // returns response as json object or returns error message
-async function request(path, data = null) { 
-    const opts = data ? {
-        method: 'POST', 
-        body: JSON.stringify(data),
-        headers: { 'Content-Type' : 'application/json' }, 
-    }
-    : {};
-    
-    try {
-        const response = await fetch(`${BASE}/${path}`, opts);
+// Used chat gpt to help with this getter function
+async function request(path, params = {}) {
+  const url = `${BASE}/${path}?${new URLSearchParams(params)}`;
 
-        if (!response.ok) {
-            const message = await response.text();
-            throw new Error(`Error ${response.status}: ${message}`);
-        }
-        return await response.json();
+  const res = await fetch(url);
+  console.log("[API]", res.status, url);
 
-    } catch (error) {
-        console.error(`API request failed: ${error.message}`);
-        return { error: error.message };
-    }
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`API ${path} failed: ${res.status} ${txt || "No body"}`);
+  }
+
+  /* calculate_* endpoints return JSON, add_player / add_to_team return blank */
+  const ct = res.headers.get("content-type") || "";
+  return ct.includes("application/json") ? res.json() : res.text();
 }
 
 
