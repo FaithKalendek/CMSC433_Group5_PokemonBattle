@@ -31,7 +31,7 @@ export const Api = {
     getMove : (id) => request(`get_move.php?id=${id}`), 
 
     // Write / Actions
-    addPlayer : (player_name, avatar_url) => request('add_player.php', { player_name, avatar_url }), 
+    addPlayer : (player_name, avatar_url) => request('add_player.php', { player_name, avatar_url }).then(r => r.player_id), 
     addToTeam : (playerId, pokemonId) => request('add_to_team.php', { playerId, pokemonId}), 
     clearTeam : (playerId) => request('clear_player_team.php', { playerId }),
     genRandomTeam : ( num_pokemon, team, character_id) => request('generate_random_team.php', { num_pokemon, team, character_id }),
