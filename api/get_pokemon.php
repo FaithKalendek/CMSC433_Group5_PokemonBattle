@@ -49,7 +49,7 @@ $move_query = $pdo->prepare("
     SELECT move_id FROM PokemonMoves
     WHERE pokemon_id = :pokemon_id
 ");
-$move_query->execute(['pokemon_id' => $stats['id']]);
+$move_query->execute(['pokemon_id' => $stats['pokemon_id']]);
 $move_ids = $move_query->fetchAll(PDO::FETCH_COLUMN);
 
 // Add move IDs to the result
