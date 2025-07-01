@@ -28,7 +28,7 @@ export const Api = {
 
     // Read functions
     getPokemon : (id = null) => request(`get_pokemon.php${id ? `?id=${id}` : ''}`),
-    getMove : (move_id) => request(`get_move.php?id=${move_id}`), 
+    getMove : (move_id) => request(`get_move.php?move_id=${move_id}`), 
 
     // Write / Actions
     addPlayer : (player_name, avatar_url) => request('add_player.php', { player_name, avatar_url }).then(r => r.player_id), 
