@@ -12,7 +12,7 @@ export class GameState {
   // Set player's starting team to null and active pokemon to null alongside the player's active choice
   // Set the current enemy's team to null and active pokemon to 0
   #phase = Phase.TITLE;
-  #player = { name: "", avatarUrl: "", team: [], active: 0, choice: null };
+  #player = { name: "", avatarUrl: "", id: "", team: [], active: 0, choice: null, playerRank: 1 };
   #currentEnemy = { name: "", avatarUrl: "", team: [], active: 0 };
 
   start() {
@@ -48,7 +48,7 @@ export class GameState {
   }
 
 
-  addPlayer(name, avatarUrl) {
+  async addPlayer(name, avatarUrl) {
     this.#player.name = name;
     if (!avatarUrl) {
         avatarUrl = " ";
@@ -64,7 +64,15 @@ export class GameState {
     // Api call so that the player's name and avatar are added to the database
     this.#player.avatarUrl = avatarUrl;
     console.log(`Player added: ${name} with avatar ${avatarUrl}`);
-    Api.addPlayer(name, avatarUrl).then(() => console.log("Player added to the server.")).catch(err => console.error("Error adding player to server:", err));
+    
+    try {
+        const id = await Api.addPlayer(name, avatarUrl);
+        this.#player.id = id;
+        console.log(`Player ID: ${this.#player.id}`);
+    }
+    catch (error) {
+        console.error("Error adding player:", error);
+    }
     this.#dispatch();
   }
 }
@@ -83,11 +91,39 @@ export class GameState {
   }
 
   async #startBattle() {
-    this.#setPhase(Phase.BATTLE);
-    console.log("Starting battle...");
 
+    if (!this.#player.id) {
+      console.error("Player ID is not set. Cannot start battle.");
+      return;
+    }
+
+    const level = this.#player.playerRank;
+    const pid = this.#player.id;
+
+    try {
+        // If the player has no pokemon, generate a random pokemon
+        if (this.#player.team.length === 0) {
+            // Generate a random team if the player has no pokemon
+            const playerTeam = await Api.genRandomTeam(1, "player", pid);
+        }
+
+        // Generate a random team for the enemy they are facing
+        // The enemy id is based on the player's current level
+        const enemyTeam = await Api.genRandomTeam(level, "enemy", level);
+
+        // Set the teams locally
+        this.#player.team = playerTeam;
+        this.#player.choice = null;
+        this.#currentEnemy.team = enemyTeam;
+        this.#currentEnemy.active = 0;
+
+        // Change the game phase to battle
+        this.#setPhase(Phase.BATTLE);
+    } catch (error) {
+        console.error("Error starting battle:", error);
+        this.#setPhase(Phase.TITLE);
+    }
     this.#dispatch();
-    // TODO: Api calls to start battle and get player / enemy team.
   }
 
   async #runTurn() {

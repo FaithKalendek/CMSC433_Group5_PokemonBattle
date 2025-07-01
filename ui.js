@@ -27,6 +27,7 @@ const $nextBattleBtn = document.getElementById("next-battle");
 $startBtn.addEventListener("click", () => {
     const name = $identityName.textContent.trim();
     const avatarUrl = $pAvatar.src; 
+    // calls api to add player to the database and stores data in the gamestate
     game.addPlayer(name, avatarUrl);
     game.next(); 
 });
