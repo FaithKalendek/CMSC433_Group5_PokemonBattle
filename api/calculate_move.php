@@ -4,37 +4,6 @@
 // Output: Result of the attack (hit/miss, damage, new HP, effects)
 // Side effect: Updates the database with new HP/status
 
-/*Attack Calculation Implementation Plan:
-
-get attacker and defender pokemon info from database
-
-get move info from database
-
-If accuracy is null, status move, no damage to calculate
-    Apply Buff/Debuff Effect (calculate new stat value and update database)
-    return effect result
-Else, Calculate damage
-    Accuracy = accuracy debuff modifier (if any) * move's accuracy
-    Not dealing with evasion, so don't worry abt it
-    Roll to hit (generate random number 1–100)
-    If roll > accuracy, move misses
-        return miss result
-    Else, hit
-        Roll again to see if crit
-        If roll >= 95, crit
-            Set crit modifier to 1.5
-        Calculate damage:
-            Base damage = (attacker's attack * move's power) / defender's defense
-            Apply type effectiveness multiplier
-            Apply crit multiplier (default 1, 1.5 if crit)
-            Round down to nearest integer
-            Subtract damage from defender’s current HP
-            If HP drops to 0 or below, the Pokémon faints.
-            Apply Move Effects (calculate chance if needed)
-            Update Database with all changes
-            Return hit result with damage, new HP, and any effects
- */
-
 require '../pdo.php';
 
 // Connect to database
@@ -44,7 +13,7 @@ $pdo = getPokemonPDO();
 $attacker_id = $_GET['attacker_id'];
 $defender_id = $_GET['defender_id'];
 $move_id = $_GET['move_id'];
-$is_attacker_player = $_GET['is_attacker_player'];
+$is_attacker_player = ($_GET['is_attacker_player'] === 'true');
 $player_id = $_GET['player_id'];
 $opponent_id = $_GET['opponent_id'];
 
@@ -118,11 +87,8 @@ $move = $query->fetch(PDO::FETCH_ASSOC);
 // Move logic/calculation functions in move_logic.php
 require 'move_logic.php';
 
-// If accuracy is null, status move
+// If power is null, status move or special case
 if ($move['power'] == null) {
-
-    // Apply Buff/Debuff Effect (calculate new stat value and update database)
-    // return result
     switch ($move['name']) {
         case 'Growl':
             growl($defender, $pdo, $is_attacker_player);
@@ -183,6 +149,30 @@ if ($move['power'] == null) {
             echo json_encode([
                 'result' => $attacker['name'] . " used " . $move['name'] . " on " . $defender['name'] . "! " . $defender['name'] . "'s accuracy fell!"
             ]);
+            break;
+        case 'Gyro Ball':
+            $result = gyro_ball($attacker, $defender, $pdo, $is_attacker_player);
+            if (isset($result['hit']) && !$result['hit']) {
+                echo json_encode([
+                    'result' => $attacker['name'] . " used " . $move['name'] . " on " . $defender['name'] . ", but it missed!"
+                ]);
+            } else {
+                echo json_encode([
+                    'result' => $attacker['name'] . " used " . $move['name'] . " on " . $defender['name'] . "! "
+                ]);
+            }
+            break;
+        case 'Electro Ball':
+            $result = electro_ball($attacker, $defender, $pdo, $is_attacker_player);
+            if (isset($result['hit']) && !$result['hit']) {
+                echo json_encode([
+                    'result' => $attacker['name'] . " used " . $move['name'] . " on " . $defender['name'] . ", but it missed!"
+                ]);
+            } else {
+                echo json_encode([
+                    'result' => $attacker['name'] . " used " . $move['name'] . " on " . $defender['name'] . "! "
+                ]);
+            }
             break;
     }
 
