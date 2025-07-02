@@ -4,6 +4,7 @@ export const Phase = {
   TITLE: "TITLE",
   BATTLE: "BATTLE",
   RESULT: "RESULT",
+  LOSS: "LOSS",
 };
 
 // Gamestate class that helps determine the players game state amount other important loops in the game.
@@ -289,7 +290,7 @@ export class GameState {
       if (nextIdx === -1) {
         this.#lastMoveText += `\n${playerPkmn.name} fainted! You have no Pokémon left…`;
         this.#result = "LOSE";
-        this.#setPhase(Phase.RESULT);
+        this.#setPhase(Phase.LOSS);
         ended = true;
       } else {
         this.#player.active = nextIdx;

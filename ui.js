@@ -172,6 +172,10 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     renderSwitchPanel();
   }
 
+  if (snap.phase === Phase.LOSS) {
+    showLossScreen();
+  }
+ 
   if (snap.phase === Phase.RESULT) {
       buildSelection(snap.currentEnemy.team);
     
@@ -220,7 +224,24 @@ function renderSwitchPanel() {
   document.getElementById("switch-panel").classList.remove("hidden");
 }
 
+function showLossScreen() {
+  // Hide everything else
+  document.getElementById("battle-screen").classList.add("hidden");
+  document.getElementById("pokemon-selection").classList.add("hidden");
+  document.getElementById("switch-panel").classList.add("hidden");
+  document.getElementById("pre-battle-screen").classList.add("hidden");
 
+  // Set identity name
+  const identity = document.getElementById("identity-name").textContent;
+  document.getElementById("loss-name").textContent = identity;
+
+  // Show the loss screen
+  document.getElementById("loss-screen").classList.remove("hidden");
+}
+
+document.getElementById("play-again-loss").addEventListener("click", () => {
+  location.reload();
+});
 
 function buildSelection(enemyTeam) {
   // Make sure screens are swapped
