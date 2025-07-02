@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -189,6 +190,23 @@
   </div>
 </section>
 
+<!-- Loss Screen -->
+<section id="loss-screen" class="hidden">
+  <div class="text-box loss-box">
+    <h2>You Were Defeated...</h2>
+    <p>The Indigo Training Program proved too tough this time. But every great trainer learns from failure.</p>
+
+    <div class="certificate loss-certificate">
+      <h3>Notice of Elimination</h3>
+      <p>This certifies that</p>
+      <h2 id="loss-name">[Player Name]</h2>
+      <p>has shown courage and determination, but did not complete the Indigo Training Program.</p>
+      <p>Keep training, and return stronger next time!</p>
+    </div>
+
+    <button id="play-again-loss">Try Again</button>
+  </div>
+</section>
 
   <!-- JavaScript -->
   <script>
@@ -331,6 +349,24 @@
 
     // Play Again button — reloads the page
     document.getElementById('play-again').addEventListener('click', () => {location.reload();
+    });
+
+    function showLossScreen() {
+      // Hide other screens
+      document.getElementById('battle-screen').classList.add('hidden');
+      document.getElementById('pokemon-selection').classList.add('hidden');
+      document.getElementById('switch-panel').classList.add('hidden');
+      document.getElementById('pre-battle-screen').classList.add('hidden');
+
+      // Use selected identity title for the certificate
+      const identity = document.getElementById('identity-name').textContent;
+      document.getElementById('loss-name').textContent = identity;
+
+      // Show loss screen
+      document.getElementById('loss-screen').classList.remove('hidden');
+    }
+    
+    document.getElementById('play-again-loss').addEventListener('click', () => {location.reload();
     });
 
     // Map pre-battle dialogue based on opponent name
