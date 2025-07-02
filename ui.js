@@ -6,32 +6,44 @@ const playerAvatars = [
   { key: "rookie", sprite: "images/ambitiousrookie.png" },
   { key: "scholar", sprite: "images/curiousscholar.png" },
   { key: "wanderer", sprite: "images/wildwanderer.png" },
-  { key: "beginner", sprite: "images/joyfulbeginner.png" }
+  { key: "beginner", sprite: "images/joyfulbeginner.png" },
 ];
 
 function getPlayerAvatarSprite(key) {
-  const found = playerAvatars.find(a => a.key === key);
+  const found = playerAvatars.find((a) => a.key === key);
   return found ? found.sprite : "images/default_player.png";
 }
 
 /* ---------- Opponent Trainer Sprite Lookup ---------- */
 const opponents = [
-  { name: "Youngster Joey",  sprite: "images/youngster.png"  },
-  { name: "Lass Ellie",      sprite: "images/lass.png" },
-  { name: "PokéManiac Brent",sprite: "images/pokemaniac.png" },
-  { name: "Ace Trainer Chad",sprite: "images/acetrainerchad.png" },
-  { name: "Ace Trainer Quinn",sprite:"images/acetrainerquinn.png" },
-  { name: "Lt. Surge",       sprite: "images/ltsurge.png" },
-  { name: "Team Rocket",     sprite: "images/teamrocket.png"},
-  { name: "Gym Leader Misty",sprite: "images/misty.png" },
-  { name: "Gym Leader Brock",sprite: "images/brock.png" },
-  { name: "Champion Blue",   sprite: "images/championblue.png" }
+  { name: "Youngster Joey", sprite: "images/youngster.png" },
+  { name: "Lass Ellie", sprite: "images/lass.png" },
+  { name: "PokéManiac Brent", sprite: "images/pokemaniac.png" },
+  { name: "Ace Trainer Chad", sprite: "images/acetrainerchad.png" },
+  { name: "Ace Trainer Quinn", sprite: "images/acetrainerquinn.png" },
+  { name: "Lt. Surge", sprite: "images/ltsurge.png" },
+  { name: "Team Rocket", sprite: "images/teamrocket.png" },
+  { name: "Gym Leader Misty", sprite: "images/misty.png" },
+  { name: "Gym Leader Brock", sprite: "images/brock.png" },
+  { name: "Champion Blue", sprite: "images/championblue.png" },
 ];
 
 function getOpponentSpriteUrl(name) {
-  const opp = opponents.find(o => o.name === name);
+  const opp = opponents.find((o) => o.name === name);
   return opp ? opp.sprite : "images/default_opponent.png";
 }
+
+/* Music */
+const music = {
+  [Phase.TITLE]: new Audio("audio/title.mp3"),
+  [Phase.BATTLE]: new Audio("audio/battle.mp3"),
+  [Phase.LOSS]: new Audio("audio/loss.mp3"),
+  [Phase.RESULT]: new Audio("audio/result.mp3"),
+};
+
+music[Phase.TITLE].loop = true;
+music[Phase.BATTLE].loop = true;
+music[Phase.RESULT].loop = true;
 
 /* ---------- DOM references ---------- */
 const $identityGrid = document.querySelector(".identity-selection");
@@ -40,7 +52,9 @@ const $identityName = document.getElementById("identity-name");
 const $identityTxt = document.getElementById("identity-snippet");
 const $startBtn = document.getElementById("start-battle");
 const $pAvatar = document.getElementById("player-trainer-sprite");
-const $opponentTrainerAvatar = document.getElementById("opponent-trainer-sprite");
+const $opponentTrainerAvatar = document.getElementById(
+  "opponent-trainer-sprite"
+);
 
 const $playerHp = document.getElementById("player-hp");
 const $enemyHp = document.getElementById("opponent-hp");
@@ -57,6 +71,9 @@ const $selectionMsg = document.getElementById("selection-message");
 const $selectionConf = document.getElementById("selection-confirmation");
 const $nextBattleBtn = document.getElementById("next-battle");
 const moveBtns = [...document.querySelectorAll("#action-panel .move-btn")];
+
+// current music track
+let currentTrack = null;
 
 function spriteUrl(pokemon) {
   // expects a pokemon object with a .name property
@@ -134,7 +151,11 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   console.log("=== STATECHANGE ===");
   console.log("snap.player:", snap.player);
   console.log("snap.player.avatarUrl:", snap.player.avatarUrl);
-  console.log("Setting $pAvatar.src to:", snap.player.avatarUrl || "images/ambitiousrookie.png");
+  console.log(
+    "Setting $pAvatar.src to:",
+    snap.player.avatarUrl || "images/ambitiousrookie.png"
+  );
+  if (audioUnlocked) playMusic(snap.phase);
 
   if (snap.phase === Phase.BATTLE) {
     const p = snap.player.team[snap.player.active];
@@ -175,12 +196,10 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   if (snap.phase === Phase.LOSS) {
     showLossScreen();
   }
- 
+
   if (snap.phase === Phase.RESULT) {
-    if (snap.result === "victory") {
-      buildSelection(snap.currentEnemy.team);
-    }
-    
+    buildSelection(snap.currentEnemy.team);
+
     // Hide the switch panel outside of battle
     document.getElementById("switch-panel").classList.add("hidden");
     document.getElementById("battle-screen").classList.add("hidden");
@@ -270,6 +289,48 @@ function buildSelection(enemyTeam) {
     $selectionGrid.appendChild(div);
   });
 }
+
+function playMusic(phase) {
+  const next = music[phase];
+  if (next === currentTrack) return;
+
+  if (currentTrack) {
+    const t = currentTrack;
+    const fade = setInterval(() => {
+      if (t.volume <= 0.05) {
+        t.volume = 0; // Mute before stopping
+        t.pause();
+        t.currentTime = 0; // Reset to start
+        t.volume = 1; // Reset volume for next track
+        clearInterval(fade);
+        startNext();
+      } else {
+        t.volume = Math.max(0, t.volume - 0.05); // Decrease volume
+      }
+    }, 50);
+  } else {
+    startNext(); // No current track, just start the next one
+  }
+
+  function startNext() {
+    if (!next) return;
+    next.volume = 1;
+    next.play().catch(console.error);
+    currentTrack = next; // Update current track
+  }
+}
+
+/* --- unlock audio on the first user-gesture --- */
+let audioUnlocked = false;
+window.addEventListener(
+  "pointerdown", // fires for mouse, touch, pen
+  () => {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    playMusic(game.snapshot().phase); // start whatever phase we’re in
+  },
+  { once: true } // listener removes itself
+);
 
 // Starts the game state
 game.start();
