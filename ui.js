@@ -153,7 +153,7 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   console.log("snap.player:", snap.player);
   console.log("snap.player.avatarUrl:", snap.player.avatarUrl);
   console.log("Setting $pAvatar.src to:", snap.player.avatarUrl || "images/ambitiousrookie.png");
-  playMusic(snap.phase);
+  if (audioUnlocked) playMusic(snap.phase);
 
   if (snap.phase === Phase.BATTLE) {
     const p = snap.player.team[snap.player.active];
@@ -311,6 +311,18 @@ if (next) setTimeout(() =>
   next.play().catch(console.error), 300);
   currentTrack = next;
 }
+
+/* --- unlock audio on the first user-gesture --- */
+let audioUnlocked = false;
+window.addEventListener(
+  "pointerdown",            // fires for mouse, touch, pen
+  () => {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    playMusicFor(game.snapshot().phase);   // start whatever phase we’re in
+  },
+  { once: true }            // listener removes itself
+);
 
 // Starts the game state
 game.start();
