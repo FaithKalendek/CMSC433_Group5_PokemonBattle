@@ -57,7 +57,7 @@ export const Api = {
     }),
   addToTeam: (team, character_id, pokemon_id) =>
     request("add_to_team.php", { team, character_id, pokemon_id }),
-  clearTeam: (playerId) => request("clear_player_team.php", { playerId }),
+  clearTeam: (player_id) => request("clear_player_team.php", { player_id }),
   genRandomTeam: (num_pokemon, team, character_id) =>
     request("generate_random_team.php", { num_pokemon, team, character_id }),
   turnOrder: (attacker_id, defender_id, attacker_side) =>
