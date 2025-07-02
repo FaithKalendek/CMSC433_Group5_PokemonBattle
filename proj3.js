@@ -108,6 +108,8 @@ export class GameState {
       return;
     }
 
+    this.#player.team.forEach((pokemon) => { pokemon.current_hp = pokemon.max_hp; });
+
     const level = this.#player.playerRank;
     const pid = this.#player.id;
 
@@ -344,8 +346,9 @@ export class GameState {
 
   async addToTeam(pokemon) {
     try {
-      await  Api.addToTeam(this.#player.id, pokemon.pokemon_id);
-
+      await  Api.addToTeam("player",this.#player.id, pokemon.pokemon_id);
+      
+      pokemon.current_hp = pokemon.max_hp; // Reset current HP to max HP
       if (this.#player.team.length < 6) {
         this.#player.team = [...this.#player.team, {...pokemon}];
     }
