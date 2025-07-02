@@ -13,6 +13,9 @@ const $playerHp = document.getElementById("player-hp");
 const $enemyHp = document.getElementById("opponent-hp");
 const $statusTxt = document.querySelector("#status-box p");
 
+const $playerMonImg = document.getElementById("player-avatar");
+const $enemyMonImg = document.getElementById("opponent-avatar");
+
 const $battleScreen = document.getElementById("battle-screen");
 const $introScreen = document.getElementById("intro-screen");
 const $selectionBlock = document.getElementById("pokemon-selection");
@@ -21,6 +24,19 @@ const $selectionMsg = document.getElementById("selection-message");
 const $selectionConf = document.getElementById("selection-confirmation");
 const $nextBattleBtn = document.getElementById("next-battle");
 const moveBtns = [...document.querySelectorAll("#action-panel .move-btn")];
+
+function spriteUrl(name) {
+  return `images/${name.name}.gif`;
+}
+
+function trainerSpriteUrl(name) {
+  return `images/${name}.png`;
+}
+
+function pct(hp, max) {
+  if (!max) return "0%";
+  return Math.max(0, Math.min(100, (hp / max) * 100)) + "%";
+}
 
 const moveCache = new Map(); // Cache for moves to avoid multiple API calls
 
@@ -70,7 +86,6 @@ $startBtn.addEventListener("click", () => {
 // attack button functionality with game logic
 document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
   btn.addEventListener("click", () => {
-
     // If the button is disabled or the game is not in battle phase, do nothing
     if (btn.disabled || game.snapshot().phase !== Phase.BATTLE) return;
 
@@ -88,12 +103,19 @@ document.addEventListener("statechange", ({ detail: snap }) => {
 
     $playerHp.style.width = `${(p.current_hp / p.max_hp) * 100}%`;
     $enemyHp.style.width = `${(e.current_hp / e.max_hp) * 100}%`;
-    
+
+    $playerMonImg.src = spriteUrl(p);
+    $playerMonImg.alt = p.name;
+    $enemyMonImg.src = spriteUrl(e);
+    $enemyMonImg.alt = e.name;
+    $pAvatar.src = trainerSpriteUrl(snap.player.avatarUrl);
+    $pAvatar.alt = snap.player.name;
+
     if (snap.lastMoveText) {
       $statusTxt.textContent = snap.lastMoveText;
-    } else {        $statusTxt.textContent = `${p.name} HP ${p.current_hp} vs ${e.name} HP ${e.current_hp}`; 
+    } else {
+      $statusTxt.textContent = `${p.name} HP ${p.current_hp} vs ${e.name} HP ${e.current_hp}`;
     }
-
 
     const active = snap.player.team[snap.player.active];
     renderMoves(active);
