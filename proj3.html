@@ -93,6 +93,7 @@
     <!-- Selected Identity Summary -->
     <div id="identity-summary" class="hidden text-box">
       <h3>You Chose:</h3>
+      <img id="identity-summary-avatar" src="" alt="Your Trainer Avatar" style="width:100px;display:block;margin:auto;">
       <h4 id="identity-name">The Ambitious Rookie</h4>
       <p id="identity-snippet"></p>
       <button id="start-battle">Start Your Journey</button>
@@ -199,19 +200,35 @@
       beginner: "Some people say beginners are easy to beat. Let them. You’re not here to impress anyone—you’re here to learn, to grow, and to enjoy every moment alongside your Pokémon. The Training Program may be tough, but your excitement is unstoppable. Even your opponents can’t help but smile when you enter the arena."
     };
 
+    // Avatar lookup for summary
+    const playerAvatarMap = {
+      rookie: "images/ambitiousrookie.png",
+      scholar: "images/curiousscholar.png",
+      wanderer: "images/wildwanderer.png",
+      beginner: "images/joyfulbeginner.png"
+    };
+
+    // For chosen identity display
+    const identityDisplayNames = {
+      rookie: "Ambitious Rookie",
+      scholar: "Curious Scholar",
+      wanderer: "Wild Wanderer",
+      beginner: "Joyful Beginner"
+    };
+
     const opponents = [
-  { name: "Youngster Joey",  sprite: "images/youngster.png"  },
-  { name: "Lass Ellie",      sprite: "images/lass.png" },
-  { name: "PokéManiac Brent",sprite: "images/pokemaniac.png" },
-  { name: "Ace Trainer Chad",sprite: "images/acetrainerchad.png" },
-  { name: "Ace Trainer Quinn",sprite:"images/acetrainerquinn.png" },
-  { name: "Lt. Surge",       sprite: "images/ltsurge.png" },
-  { name: "Team Rocket",     sprite: "images/teamrocket.png"},
-  { name: "Gym Leader Misty",sprite: "images/misty.png" },
-  { name: "Gym Leader Brock",sprite: "images/brock.png" },
-  { name: "Champion Blue",   sprite: "images/championblue.png" }
-];
-   let currentOpponent = 0;
+      { name: "Youngster Joey",  sprite: "images/youngster.png"  },
+      { name: "Lass Ellie",      sprite: "images/lass.png" },
+      { name: "PokéManiac Brent",sprite: "images/pokemaniac.png" },
+      { name: "Ace Trainer Chad",sprite: "images/acetrainerchad.png" },
+      { name: "Ace Trainer Quinn",sprite:"images/acetrainerquinn.png" },
+      { name: "Lt. Surge",       sprite: "images/ltsurge.png" },
+      { name: "Team Rocket",     sprite: "images/teamrocket.png"},
+      { name: "Gym Leader Misty",sprite: "images/misty.png" },
+      { name: "Gym Leader Brock",sprite: "images/brock.png" },
+      { name: "Champion Blue",   sprite: "images/championblue.png" }
+    ];
+    let currentOpponent = 0;
 
     // Choosing identity
     document.querySelectorAll('.select-identity').forEach(button => {
@@ -220,15 +237,20 @@
         const identityKey = card.dataset.identity;
         const identityName = card.querySelector('h4').textContent.slice(4).toLocaleLowerCase().replace(/\s+/g,""); 
 
-        document.getElementById('identity-name').textContent = identityName;
+        document.getElementById('identity-name').textContent = identityDisplayNames[identityKey] || identityKey;
         document.getElementById('identity-snippet').textContent = identitySnippets[identityKey];
+
+        // Set the avatar image in the summary
+        const avatarImg = document.getElementById('identity-summary-avatar');
+        avatarImg.src = playerAvatarMap[identityKey] || "images/default_player.png";
+        avatarImg.alt = identityName + " Avatar";
 
         document.querySelector('.identity-selection').style.display = 'none';
         document.getElementById('identity-summary').classList.remove('hidden');
         window.selectedIdentity = identityKey;
       });
     });
-	
+    
     // Go to battle screen
     document.getElementById('start-battle').addEventListener('click', () => {
       document.getElementById('intro-screen').classList.add('hidden');
@@ -281,113 +303,112 @@
       if (currentOpponent >= opponents.length) {
         showVictoryScreen();
       } else {
-     
         showPreBattleScreen(
-        opponents[currentOpponent].name,
-        opponents[currentOpponent].sprite
-     );
-   }
-});
-
-   // Example team with up to 6 Pokémon
-const playerTeam = [
-  { name: "Charmander" },
-  { name: "Bulbasaur" },
-  { name: "Pidgey" }
-];
-
-function renderSwitchPanel(activeIndex = 0) {
-  const container = document.getElementById("team-roster");
-  container.innerHTML = "";
-
-  playerTeam.forEach((poke, i) => {
-    const btn = document.createElement("button");
-    btn.className = "switch-btn";
-    btn.textContent = poke.name;
-
-    // Disable the button if it's already active
-    if (i === activeIndex) {
-      btn.disabled = true;
-      btn.style.opacity = "0.5";
-    }
-
-    btn.addEventListener("click", () => {
-      console.log(`Switching to: ${poke.name}`);
-      // Call switch logic here (e.g., update avatar, moves, etc.)
+          opponents[currentOpponent].name,
+          opponents[currentOpponent].sprite
+        );
+      }
     });
 
-    container.appendChild(btn);
-  });
+    // Example team with up to 6 Pokémon
+    const playerTeam = [
+      { name: "Charmander" },
+      { name: "Bulbasaur" },
+      { name: "Pidgey" }
+    ];
 
-  // Show the panel
-  document.getElementById("switch-panel").classList.remove("hidden");
-}
-function showVictoryScreen() {
-  // Hide other game sections
-  document.getElementById('battle-screen').classList.add('hidden');
-  document.getElementById('pokemon-selection').classList.add('hidden');
-  document.getElementById('switch-panel').classList.add('hidden');
+    function renderSwitchPanel(activeIndex = 0) {
+      const container = document.getElementById("team-roster");
+      container.innerHTML = "";
 
-  // Set certificate identity title (e.g., "The Curious Scholar")
-  const identity = document.getElementById('identity-name').textContent;
-  document.getElementById('cert-name').textContent = identity;
+      playerTeam.forEach((poke, i) => {
+        const btn = document.createElement("button");
+        btn.className = "switch-btn";
+        btn.textContent = poke.name;
 
-  // Show the final victory screen
-  document.getElementById('victory-screen').classList.remove('hidden');
-}
+        // Disable the button if it's already active
+        if (i === activeIndex) {
+          btn.disabled = true;
+          btn.style.opacity = "0.5";
+        }
 
-// Play Again button — reloads the page
-document.getElementById('play-again').addEventListener('click', () => {location.reload();
-});
+        btn.addEventListener("click", () => {
+          console.log(`Switching to: ${poke.name}`);
+          // Call switch logic here (e.g., update avatar, moves, etc.)
+        });
 
-// Map pre-battle dialogue based on opponent name
-const trainerDialogue = {
-  "Youngster Joey": "Whoa! You’re new too? Awesome! Let’s see who’s got the better starter skills!",
-  "Lass Ellie": "Ooo, you’ve already beaten a few people? I like your vibe. Let’s make this fun!",
-  "PokéManiac Brent": "So you’ve survived the easy battles. Things are about to get... weird.",
-  "Ace Trainer Chad": "Not bad, rookie. Most people don’t get this far. Think you’ve got what it takes?",
-  "Ace Trainer Quinn": "You’ve shown some real promise. But this is where the real competitors shine.",
-  "Lt. Surge": "You’ve got spark, kid—but let’s see if you’ve got the voltage to back it up!",
-  "Team Rocket": "You’ve been steamrolling everyone, huh? Well prepare for trouble—and make it double!",
-  "Gym Leader Misty": "You’ve made it far, but this is where most beginners wash out. Ready for a real test?",
-  "Gym Leader Brock": "I’ve watched your battles. You’ve grown stronger—but strength without control means nothing.",
-  "Champion Blue": "9 wins, huh? Not bad for a newbie. But if you want to graduate, you’ll have to beat the best."
-};
+        container.appendChild(btn);
+      });
 
-// Show pre-battle dialogue screen
-function showPreBattleScreen(opponentName, spritePath) {
-  // Set sprite and dialogue
-  document.getElementById('prebattle-sprite').src = spritePath;
-  document.getElementById('prebattle-sprite').alt = opponentName;
-  document.getElementById('prebattle-dialogue').textContent = trainerDialogue[opponentName] || "Ready for battle.";
+      // Show the panel
+      document.getElementById("switch-panel").classList.remove("hidden");
+    }
+    function showVictoryScreen() {
+      // Hide other game sections
+      document.getElementById('battle-screen').classList.add('hidden');
+      document.getElementById('pokemon-selection').classList.add('hidden');
+      document.getElementById('switch-panel').classList.add('hidden');
 
-  // Hide everything else
-  document.getElementById('intro-screen')?.classList.add('hidden');
-  document.getElementById('battle-screen').classList.add('hidden');
-  document.getElementById('victory-screen')?.classList.add('hidden');
-  document.getElementById('pokemon-selection').classList.add('hidden');
+      // Set certificate identity title (e.g., "The Curious Scholar")
+      const identity = document.getElementById('identity-name').textContent;
+      document.getElementById('cert-name').textContent = identity;
 
-  // Show dialogue screen
-  document.getElementById('pre-battle-screen').classList.remove('hidden');
-}
+      // Show the final victory screen
+      document.getElementById('victory-screen').classList.remove('hidden');
+    }
 
-// Hook up the "Begin Battle" button
-document.getElementById('start-battle-btn').addEventListener('click', () => {
-  document.getElementById('pre-battle-screen').classList.add('hidden');
-  document.getElementById('battle-screen').classList.remove('hidden');
-  renderSwitchPanel();  
-});
+    // Play Again button — reloads the page
+    document.getElementById('play-again').addEventListener('click', () => {location.reload();
+    });
 
-const moves = [
-  { name: "Growl", desc: "The user growls...", power: null, accuracy: 100 },
-  { name: "Ember", desc: "Shoots a flame...", power: 40, accuracy: 100 }
-];
+    // Map pre-battle dialogue based on opponent name
+    const trainerDialogue = {
+      "Youngster Joey": "Whoa! You’re new too? Awesome! Let’s see who’s got the better starter skills!",
+      "Lass Ellie": "Ooo, you’ve already beaten a few people? I like your vibe. Let’s make this fun!",
+      "PokéManiac Brent": "So you’ve survived the easy battles. Things are about to get... weird.",
+      "Ace Trainer Chad": "Not bad, rookie. Most people don’t get this far. Think you’ve got what it takes?",
+      "Ace Trainer Quinn": "You’ve shown some real promise. But this is where the real competitors shine.",
+      "Lt. Surge": "You’ve got spark, kid—but let’s see if you’ve got the voltage to back it up!",
+      "Team Rocket": "You’ve been steamrolling everyone, huh? Well prepare for trouble—and make it double!",
+      "Gym Leader Misty": "You’ve made it far, but this is where most beginners wash out. Ready for a real test?",
+      "Gym Leader Brock": "I’ve watched your battles. You’ve grown stronger—but strength without control means nothing.",
+      "Champion Blue": "9 wins, huh? Not bad for a newbie. But if you want to graduate, you’ll have to beat the best."
+    };
 
-document.querySelectorAll('.tooltip').forEach((tooltipDiv, index) => {
-  const span = tooltipDiv.querySelector('.tooltiptext');
-  const move = moves[index];
-  span.textContent = `${move.name}: ${move.desc} Power: ${move.power ?? '—'}, Accuracy: ${move.accuracy}%`;
-});
+    // Show pre-battle dialogue screen
+    function showPreBattleScreen(opponentName, spritePath) {
+      // Set sprite and dialogue
+      document.getElementById('prebattle-sprite').src = spritePath;
+      document.getElementById('prebattle-sprite').alt = opponentName;
+      document.getElementById('prebattle-dialogue').textContent = trainerDialogue[opponentName] || "Ready for battle.";
+
+      // Hide everything else
+      document.getElementById('intro-screen')?.classList.add('hidden');
+      document.getElementById('battle-screen').classList.add('hidden');
+      document.getElementById('victory-screen')?.classList.add('hidden');
+      document.getElementById('pokemon-selection').classList.add('hidden');
+
+      // Show dialogue screen
+      document.getElementById('pre-battle-screen').classList.remove('hidden');
+    }
+
+    // Hook up the "Begin Battle" button
+    document.getElementById('start-battle-btn').addEventListener('click', () => {
+      document.getElementById('pre-battle-screen').classList.add('hidden');
+      document.getElementById('battle-screen').classList.remove('hidden');
+      renderSwitchPanel();  
+    });
+
+    const moves = [
+      { name: "Growl", desc: "The user growls...", power: null, accuracy: 100 },
+      { name: "Ember", desc: "Shoots a flame...", power: 40, accuracy: 100 }
+    ];
+
+    document.querySelectorAll('.tooltip').forEach((tooltipDiv, index) => {
+      const span = tooltipDiv.querySelector('.tooltiptext');
+      const move = moves[index];
+      span.textContent = `${move.name}: ${move.desc} Power: ${move.power ?? '—'}, Accuracy: ${move.accuracy}%`;
+    });
 
   </script>
 <script type="module" src="ui.js"></script>
