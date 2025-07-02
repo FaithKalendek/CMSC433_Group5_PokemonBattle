@@ -55,8 +55,8 @@ export const Api = {
       const single = r.length > 0 ? r[0] : r;
       return single.player_id;
     }),
-  addToTeam: (playerId, pokemonId) =>
-    request("add_to_team.php", { playerId, pokemonId }),
+  addToTeam: (character_id, pokemon_id) =>
+    request("add_to_team.php", { character_id, pokemon_id }),
   clearTeam: (playerId) => request("clear_player_team.php", { playerId }),
   genRandomTeam: (num_pokemon, team, character_id) =>
     request("generate_random_team.php", { num_pokemon, team, character_id }),
