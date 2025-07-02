@@ -175,8 +175,9 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   }
 
   if (snap.phase === Phase.RESULT) {
-    buildSelection(snap.currentEnemy.team);
-    // Hide the switch panel outside of battle
+    // Hide battle screen, show selection/results screen
+    document.getElementById("battle-screen").classList.add("hidden");
+    document.getElementById("pokemon-selection").classList.remove("hidden");
     document.getElementById("switch-panel").classList.add("hidden");
   }
 
