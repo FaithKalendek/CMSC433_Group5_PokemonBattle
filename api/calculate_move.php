@@ -119,7 +119,7 @@ $move = $query->fetch(PDO::FETCH_ASSOC);
 require 'move_logic.php';
 
 // If accuracy is null, status move
-if ($move['accuracy'] == null) {
+if ($move['power'] == null) {
 
     // Apply Buff/Debuff Effect (calculate new stat value and update database)
     // return result

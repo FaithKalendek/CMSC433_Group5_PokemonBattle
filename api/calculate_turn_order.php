@@ -18,24 +18,24 @@ $defender_id = $_GET['defender_id'];
 if ($_GET['attacker_side'] === 'player') {
     
     // Get attacker speed from PlayerPokemon table
-    $query = $pdo->prepare("SELECT current_speed FROM PlayerPokemon WHERE id = :id");
+    $query = $pdo->prepare("SELECT speed FROM PlayerPokemon WHERE id = :id");
     $query->execute(['id' => $attacker_id]);
     $attacker_speed = $query->fetch(PDO::FETCH_ASSOC);
 
     // Get defender speed from OpponentPokemon table
-    $query = $pdo->prepare("SELECT current_speed FROM OpponentPokemon WHERE id = :id");
+    $query = $pdo->prepare("SELECT speed FROM OpponentPokemon WHERE id = :id");
     $query->execute(['id' => $defender_id]);
     $defender_speed = $query->fetch(PDO::FETCH_ASSOC);
 
 } else {
 
     // Get attacker speed from OpponentPokemon table
-    $query = $pdo->prepare("SELECT current_speed FROM OpponentPokemon WHERE id = :id");
+    $query = $pdo->prepare("SELECT speed FROM OpponentPokemon WHERE id = :id");
     $query->execute(['id' => $attacker_id]);
     $attacker_speed = $query->fetch(PDO::FETCH_ASSOC);
 
     // Get defender speed from PlayerPokemon table
-    $query = $pdo->prepare("SELECT current_speed FROM PlayerPokemon WHERE id = :id");
+    $query = $pdo->prepare("SELECT speed FROM PlayerPokemon WHERE id = :id");
     $query->execute(['id' => $defender_id]);
     $defender_speed = $query->fetch(PDO::FETCH_ASSOC);
 }
