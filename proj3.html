@@ -42,7 +42,7 @@
       <div class="identity-grid">
         <!-- Ambitious Rookie -->
         <div class="identity-card" data-identity="rookie">
-          <img src="proj3_images/avatars/rookie.png" alt="Ambitious Rookie">
+          <img src="images/ambitiousrookie.png" alt="Ambitious Rookie">
           <h4>The Ambitious Rookie</h4>
           <div class="text-box">
             <p class="blurb">
@@ -54,7 +54,7 @@
 
         <!-- Curious Scholar -->
         <div class="identity-card" data-identity="scholar">
-          <img src="proj3_images/avatars/scholar.png" alt="Curious Scholar">
+          <img src="images/curiousscholar.png" alt="Curious Scholar">
           <h4>The Curious Scholar</h4>
           <div class="text-box">
             <p class="blurb">
@@ -66,7 +66,7 @@
 
         <!-- Wild Wanderer -->
         <div class="identity-card" data-identity="wanderer">
-          <img src="proj3_images/avatars/wanderer.png" alt="Wild Wanderer">
+          <img src="images/wildwanderer.png" alt="Wild Wanderer">
           <h4>The Wild Wanderer</h4>
           <div class="text-box">
             <p class="blurb">
@@ -78,7 +78,7 @@
 
         <!-- Joyful Beginner -->
         <div class="identity-card" data-identity="beginner">
-          <img src="proj3_images/avatars/beginner.png" alt="Joyful Beginner">
+          <img src="images/joyfulbeginner.png" alt="Joyful Beginner">
           <h4>The Joyful Beginner</h4>
           <div class="text-box">
             <p class="blurb">
@@ -218,7 +218,7 @@
       button.addEventListener('click', () => {
         const card = button.closest('.identity-card');
         const identityKey = card.dataset.identity;
-        const identityName = card.querySelector('h4').textContent;
+        const identityName = card.querySelector('h4').textContent.slice(4).toLocaleLowerCase().replace(/\s+/g,""); 
 
         document.getElementById('identity-name').textContent = identityName;
         document.getElementById('identity-snippet').textContent = identitySnippets[identityKey];
