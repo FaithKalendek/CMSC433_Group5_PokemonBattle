@@ -22,6 +22,7 @@ export class GameState {
     playerRank: 0,
   };
   #currentEnemy = { name: "", avatarUrl: "", team: [], active: 0 };
+  #lastMoveText = "";
 
   start() {
     this.#setPhase(Phase.TITLE);
@@ -52,6 +53,7 @@ export class GameState {
         team: this.#currentEnemy.team,
         active: this.#currentEnemy.active,
       },
+      lastMoveText: this.#lastMoveText,
     };
   }
 
@@ -147,31 +149,65 @@ export class GameState {
       return;
     }
 
-
-
+    console.log(playerPokemon.pokemon_id, enemyPokemon.pokemon_id, moveId);
     // Turn order
-    const first = await Api.turnOrder(playerPokemon.id, enemyPokemon.id, "player");
+    const first = await Api.turnOrder(
+      playerPokemon.id,
+      enemyPokemon.id,
+      "player"
+    );
     let result, attackerIsPlayer;
 
     if (first === "attacker") {
-        attackerIsPlayer = true;
-        result = await Api.attack(playerPokemon.id, enemyPokemon.id, moveId, true, this.#player.id, this.#player.playerRank + 1);
-
-        enemyPokemon.current_hp = result.new_hp ?? (enemyPokemon.current_hp - result.damage);
-        if (enemyPokemon.current_hp <= 0) {
-          this.#currentEnemy.active++;
-        }
-
+      result = await Api.attack(
+        playerPokemon.pokemon_id,
+        enemyPokemon.pokemon_id,
+        moveId,
+        true,
+        this.#player.id,
+        this.#player.playerRank + 1
+      );
+      console.log(result);
+      attackerIsPlayer = true;
     } else {
-        attackerIsPlayer = false;
-        const { move_id: enemyMoveId} = Array.isArray(await Api.pickRandomMove(enemyPokemon.id)) ? (await Api.pickRandomMove(enemyPokemon.id))[0] : await Api.pickRandomMove(enemyPokemon.id);
+      const pick = await Api.pickRandomMove(enemyPokemon.pokemon_id);
+      console.log(pick);
+      const enemyMoveId = Array.isArray(pick) ? pick[0].move_id : pick.move_id;
+      result = await Api.attack(
+        enemyPokemon.pokemon_id,
+        playerPokemon.pokemon_id,
+        enemyMoveId,
+        false,
+        this.#player.id,
+        this.#player.playerRank + 1
+      );
+      console.log(result);
+      attackerIsPlayer = false;
+    }
 
-        result = await Api.attack(enemyPokemon.id, playerPokemon.id, enemyMoveId, false, this.#player.id, this.#player.playerRank + 1);
+    const resultObject = Array.isArray(result) ? result[0] : result;
+    this.#lastMoveText = resultObject.result;
 
-        playerPokemon.current_hp = result.new_hp ?? (playerPokemon.current_hp - result.damage);
-        if (playerPokemon.current_hp <= 0) {
-          this.#player.active++;
+    if (first === "attacker") {
+      console.log("Player attacked first");
+      enemyPokemon.current_hp =
+        resultObject.new_hp ?? enemyPokemon.current_hp - resultObject.damage;
+      if (enemyPokemon.current_hp <= 0) {
+        console.log("Enemy defeated");
+        this.#currentEnemy.active++;
+        if (this.#currentEnemy.active >= this.#currentEnemy.team.length) {
+          this.#setPhase(Phase.RESULT);
+          return;
         }
+      } else {
+        playerPokemon.current_hp =
+          resultObject.new_hp ?? playerPokemon.current_hp - resultObject.damage;
+        if (playerPokemon.current_hp <= 0) {
+          console.log("Player defeated");
+          this.#setPhase(Phase.RESULT);
+          return;
+        }
+      }
     }
 
     this.#player.choice = null;

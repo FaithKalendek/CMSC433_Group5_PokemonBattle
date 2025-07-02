@@ -88,7 +88,13 @@ document.addEventListener("statechange", ({ detail: snap }) => {
 
     $playerHp.style.width = `${(p.current_hp / p.max_hp) * 100}%`;
     $enemyHp.style.width = `${(e.current_hp / e.max_hp) * 100}%`;
-    $statusTxt.textContent = `${p.name} HP ${p.current_hp} vs ${e.name} HP ${e.current_hp}`;
+    
+    if (snap.lastMoveText) {
+      $statusTxt.textContent = snap.lastMoveText;
+    } else {        $statusTxt.textContent = `${p.name} HP ${p.current_hp} vs ${e.name} HP ${e.current_hp}`; 
+    }
+
+
     const active = snap.player.team[snap.player.active];
     renderMoves(active);
   }

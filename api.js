@@ -63,6 +63,6 @@ export const Api = {
   turnOrder: (attacker_id, defender_id, attacker_side) =>
     request("calculate_turn_order.php", { attacker_id, defender_id, attacker_side }).then(r => Array.isArray(r) ? r[0].first : r.first),
   attack: (attackerId, defenderId, moveId, isPlayerAttack, playerId, opponentId) =>
-    request("calculate_attack.php", { attackerId, defenderId, moveId, isPlayerAttack, playerId, opponentId }),
+    request("calculate_move.php", { attackerId, defenderId, moveId, isPlayerAttack, playerId, opponentId }),
   pickRandomMove: (pokemon_id) => request("pick_random_move.php", { pokemon_id }),
 };
