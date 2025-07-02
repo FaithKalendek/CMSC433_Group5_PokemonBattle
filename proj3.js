@@ -110,6 +110,43 @@ export class GameState {
       return;
     }
 
+
+
+    switch (this.#player.playerRank) {
+      case 0:
+        this.#currentEnemy.name = "Youngster Joey"; 
+        break;
+      case 1:
+        this.#currentEnemy.name = "Lass Ellie";
+        break;
+      case 2:
+        this.#currentEnemy.name = "PokéManiac Brent";
+      case 3:
+        this.#currentEnemy.name = "Ace Trainer Chad";
+        break;
+      case 4:
+        this.#currentEnemy.name = "Ace Trainer Quinn";
+        break;  
+      case 5:
+        this.#currentEnemy.name = "Lt. Surge";
+        break;
+      case 6: 
+        this.#currentEnemy.name = "Team Rocket";
+        break;
+      case 7:
+        this.#currentEnemy.name = "Gym Leader Misty";
+        break;
+      case 8:
+        this.#currentEnemy.name = "Gym Leader Brock";
+        break;
+      case 9:
+        this.#currentEnemy.name = "Champion Blue";
+        break;
+      default:
+        this.#currentEnemy.name = "Unknown Trainer";
+        break;
+    }
+
     this.#player.team.forEach((pokemon) => { pokemon.current_hp = pokemon.max_hp; });
 
     const level = this.#player.playerRank;
@@ -361,7 +398,10 @@ export class GameState {
       pokemon.current_hp = pokemon.max_hp; // Reset current HP to max HP
       if (this.#player.team.length < 6) {
         this.#player.team = [...this.#player.team, {...pokemon}];
-    }
+      } else { // otherwise get ride of the last pokemon in the team
+        this.#player.team = [...this.#player.team.slice(1), {...pokemon}];
+      }
+      this.#player.active = this.#player.team.length - 1; // Set the last added Pokémon as active
 
     this.#dispatch();
   } catch (error) {
