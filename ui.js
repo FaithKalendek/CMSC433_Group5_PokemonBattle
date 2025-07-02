@@ -114,8 +114,8 @@ async function renderMoves(pokemon) {
 // When the player hits the start button, their identity is set and the game state changes to battle.
 $startBtn.addEventListener("click", () => {
   const name = $identityName.textContent.trim();
-  const avatarUrl = $pAvatar.src;
-  // calls api to add player to the database and stores data in the gamestate
+  const avatarUrl = window.selectedAvatarUrl || "images/ambitiousrookie.png";
+  console.log("Adding player with avatarUrl:", avatarUrl);
   game.addPlayer(name, avatarUrl);
 });
 
@@ -133,6 +133,11 @@ document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
 // Used chat gpt to help make the player and enemy hp bars update.
 // Have to test this code when things are running
 document.addEventListener("statechange", ({ detail: snap }) => {
+  console.log("=== STATECHANGE ===");
+  console.log("snap.player:", snap.player);
+  console.log("snap.player.avatarUrl:", snap.player.avatarUrl);
+  console.log("Setting $pAvatar.src to:", snap.player.avatarUrl || "images/ambitiousrookie.png");
+
   if (snap.phase === Phase.BATTLE) {
     const p = snap.player.team[snap.player.active];
     const e = snap.currentEnemy.team[snap.currentEnemy.active];
@@ -147,7 +152,7 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     $enemyMonImg.alt = e.name;
 
     // Update player trainer avatar
-    $pAvatar.src = getPlayerAvatarSprite(snap.player.avatarUrl);
+    $pAvatar.src = snap.player.avatarUrl || "images/ambitiousrookie.png";
     $pAvatar.alt = snap.player.name;
 
     // Update opponent trainer avatar if available in state
@@ -169,6 +174,8 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   if (snap.phase === Phase.RESULT) {
     buildSelection(snap.currentEnemy.team);
   }
+
+  console.log("avatarUrl in state:", snap.player.avatarUrl);
 });
 
 // continue button logic

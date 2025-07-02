@@ -104,9 +104,9 @@
 <main id="battle-screen" class="hidden">
   <!-- Player's Side -->
   <div class="trainer-side player-side">
-    <img class="trainer-sprite" id="player-trainer-sprite" src="proj3_images/avatars/scholar.png" alt="Player Trainer">
+    <img class="trainer-sprite" id="player-trainer-sprite" src="images/ambitiousrookie.png" alt="Player Trainer">
     <div class="trainer">
-      <img id="player-avatar" src="proj3_images/1st Generation/004Charmander.png" alt="Player Avatar">
+      <img id="player-avatar" src="images/charmander.gif" alt="Player Avatar">
       <h2 id="player-name-display">Player</h2>
       <div class="hp-bar"><div class="hp-fill" id="player-hp"></div></div>
     </div>
@@ -115,11 +115,11 @@
   <!-- Opponent's Side -->
   <div class="trainer-side opponent-side">
     <div class="trainer">
-      <img id="opponent-avatar" src="proj3_images/1st Generation/007Squirtle.png" alt="Opponent Avatar">
+      <img id="opponent-avatar" src="images/squirtle.gif" alt="Opponent Avatar">
       <h2>Opponent</h2>
       <div class="hp-bar"><div class="hp-fill" id="opponent-hp"></div></div>
     </div>
-    <img class="trainer-sprite" id="opponent-trainer-sprite" src="proj3_images/opponent_sprite/n.png" alt="Opponent Trainer">
+    <img class="trainer-sprite" id="opponent-trainer-sprite" src="images/youngster.png" alt="Opponent Trainer">
   </div>
 
   <!-- Move Buttons -->
@@ -243,7 +243,10 @@
         // Set the avatar image in the summary
         const avatarImg = document.getElementById('identity-summary-avatar');
         avatarImg.src = playerAvatarMap[identityKey] || "images/default_player.png";
-        avatarImg.alt = identityName + " Avatar";
+        avatarImg.alt = identityDisplayNames[identityKey] + " Avatar";
+
+        // Store the full URL for use in ui.js
+        window.selectedAvatarUrl = playerAvatarMap[identityKey] || "images/default_player.png";
 
         document.querySelector('.identity-selection').style.display = 'none';
         document.getElementById('identity-summary').classList.remove('hidden');
@@ -254,6 +257,8 @@
     // Go to battle screen
     document.getElementById('start-battle').addEventListener('click', () => {
       document.getElementById('intro-screen').classList.add('hidden');
+      // Save the selected avatar URL globally for ui.js to use
+      window.selectedAvatarUrl = window.selectedAvatarUrl || "images/ambitiousrookie.png";
       showPreBattleScreen(opponents[0].name, opponents[0].sprite);
     });
 
