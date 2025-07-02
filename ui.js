@@ -176,6 +176,8 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     buildSelection(snap.currentEnemy.team);
     // Hide the switch panel outside of battle
     document.getElementById("switch-panel").classList.add("hidden");
+    document.getElementById("battle-screen").classList.add("hidden");
+    document.getElementById("pokemon-selection").classList.remove("hidden");
   }
 
   console.log("avatarUrl in state:", snap.player.avatarUrl);
