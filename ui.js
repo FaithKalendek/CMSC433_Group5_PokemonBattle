@@ -94,53 +94,6 @@ document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
   })
 );
 
-
-function buildSelection(enemyTeam) {
-  // 1. Hide the battle UI, show the selection block
-  $battleScreen.classList.add("hidden");
-  $selectionBlock.classList.remove("hidden");
-
-  // 2. Clear any previous grid
-  $selectionGrid.innerHTML = "";
-  $selectionConf.classList.add("hidden");
-
-  // 3. Build a card for every Pokémon the enemy had
-  enemyTeam.forEach((mon, i) => {
-    const card = document.createElement("div");
-    card.className = "pokemon-card";
-    card.innerHTML = `
-      <img src="${spriteUrl(mon)}" alt="${mon.name}">
-      <h4>${mon.name}</h4>
-      <button data-idx="${i}">Choose</button>
-    `;
-    $selectionGrid.appendChild(card);
-  });
-}
-
-
-
- $selectionGrid.querySelectorAll("button").forEach((btn) => {
-   btn.addEventListener("click", async () => {
-     const idx = +btn.dataset.idx;
-     const chosen = enemyTeam[idx];
-
-     $selectionMsg.textContent = `You chose ${chosen.name}! Great choice.`;
-     $selectionConf.classList.remove("hidden");
-
-     try {
-       // add the mon to the player’s DB team
-       await Api.addToTeam(game.snapshot().player.id, chosen.pokemon_id);
-     } catch (err) {
-       console.error("Add-to-team failed:", err);
-     }
-   });
- });
-
-
-
-
-
-
 // Used chat gpt to help make the player and enemy hp bars update.
 // Have to test this code when things are running
 document.addEventListener("statechange", ({ detail: snap }) => {
