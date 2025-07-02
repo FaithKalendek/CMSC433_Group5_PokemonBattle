@@ -131,7 +131,7 @@ function growl ($defender, $pdo, $is_attacker_player) {
     $table = get_table($is_attacker_player, 'defender');
     $query = $pdo->prepare("UPDATE $table SET defense_modifier = :new_defense_modifier WHERE id = :defender_id
     ");
-    $query->execute([':newdefense_modifier' => $new_defense_modifier, ':defender_id' => $defender['id']]);
+    $query->execute([':new_defense_modifier' => $new_defense_modifier, ':defender_id' => $defender['id']]);
 }
 
 /*Tackle:
