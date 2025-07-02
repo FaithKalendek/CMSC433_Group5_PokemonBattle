@@ -141,10 +141,13 @@ export class GameState {
     const enemyId = this.#player.playerRank + 1;
     if (this.#player.choice == null) return;
 
+    // Current pokemon in battle
     const playerPokemon = this.#player.team[this.#player.active];
     const enemyPokemon = this.#currentEnemy.team[this.#currentEnemy.active];
 
+    // current move player chose
     const moveId = playerPokemon.move_ids[this.#player.choice];
+
     if (moveId == null) {
       console.error("Invalid move selected.");
       return;
@@ -184,6 +187,32 @@ export class GameState {
       );
       console.log(result);
       attackerIsPlayer = false;
+    }
+
+    console.log("attack result:", result);
+
+    // Check if both Pokémon are still alive
+    if (playerPokemon.hp > 0 && enemyPokemon.hp > 0) {
+      if (attackerIsPlayer) {
+        // Enemy takes a turn if player attacked first
+        const enemyMoveId = enemyPokemon.move_ids[enemyPokemon.choice];
+        const enemyResult = await Api.attack(
+          enemyPokemon.pokemon_id,
+          playerPokemon.pokemon_id,
+          enemyMoveId
+        );
+        console.log("Enemy attack result:", enemyResult);
+      } else {
+        // Player takes a turn if enemy attacked first
+        const playerResult = await Api.attack(
+          playerPokemon.pokemon_id,
+          enemyPokemon.pokemon_id,
+          moveId
+        );
+        console.log("Player attack result:", playerResult);
+      }
+    } else {
+      console.log("One of the Pokémon has fainted.");
     }
 
     const resultObject = Array.isArray(result) ? result[0] : result;
