@@ -169,7 +169,7 @@ export class GameState {
         playerPokemon.pokemon_id,
         enemyPokemon.pokemon_id,
         moveId,
-        true,
+        "true",
         this.#player.id,
         enemyId
       );
@@ -184,7 +184,7 @@ export class GameState {
         enemyPokemon.pokemon_id,
         playerPokemon.pokemon_id,
         enemyMoveId,
-        false,
+        "false",
         this.#player.id,
         enemyId
       );
@@ -225,7 +225,7 @@ export class GameState {
           enemyPokemon.pokemon_id,
           playerPokemon.pokemon_id,
           enemyMoveId,
-          false,
+          "false",
           this.#player.id,
           enemyId
         );
@@ -237,7 +237,7 @@ export class GameState {
           playerPokemon.pokemon_id,
           enemyPokemon.pokemon_id,
           moveId,
-          true,
+          "true",
           this.#player.id,
           enemyId
         );
