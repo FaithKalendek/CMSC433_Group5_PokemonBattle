@@ -48,12 +48,14 @@ export class GameState {
         team: this.#player.team,
         active: this.#player.active,
         choice: this.#player.choice,
+        playerRank: this.#player.playerRank,
       },
       currentEnemy: {
         name: this.#currentEnemy.name,
         avatarUrl: this.#currentEnemy.avatarUrl,
         team: this.#currentEnemy.team,
         active: this.#currentEnemy.active,
+        id: this.#player.playerRank + 1
       },
       lastMoveText: this.#lastMoveText,
     };

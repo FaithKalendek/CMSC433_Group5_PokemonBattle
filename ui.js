@@ -262,6 +262,10 @@ function showLossScreen() {
 
 document.getElementById("play-again-loss").addEventListener("click", () => {
   location.reload();
+  game.Api.clearteam(game.snapshot().player.id); 
+  game.Api.clearteam(game.snapshot().currentEnemy.id);
+  game.snapshot().playerRank = 0; // Reset player rank
+  game.start(); // Restart the game
 });
 
 function buildSelection(enemyTeam) {
