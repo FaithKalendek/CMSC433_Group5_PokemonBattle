@@ -4,6 +4,7 @@ export const Phase = {
   TITLE: "TITLE",
   BATTLE: "BATTLE",
   RESULT: "RESULT",
+  LOSS: "LOSS",
 };
 
 // Gamestate class that helps determine the players game state amount other important loops in the game.
@@ -106,6 +107,8 @@ export class GameState {
       console.error("Player ID is not set. Cannot start battle.");
       return;
     }
+
+    this.#player.team.forEach((pokemon) => { pokemon.current_hp = pokemon.max_hp; });
 
     const level = this.#player.playerRank;
     const pid = this.#player.id;
@@ -287,7 +290,7 @@ export class GameState {
       if (nextIdx === -1) {
         this.#lastMoveText += `\n${playerPkmn.name} fainted! You have no Pokémon left…`;
         this.#result = "LOSE";
-        this.#setPhase(Phase.RESULT);
+        this.#setPhase(Phase.LOSS);
         ended = true;
       } else {
         this.#player.active = nextIdx;
@@ -343,8 +346,9 @@ export class GameState {
 
   async addToTeam(pokemon) {
     try {
-      await  Api.addToTeam(this.#player.id, pokemon.pokemon_id);
-
+      await  Api.addToTeam("player",this.#player.id, pokemon.pokemon_id);
+      
+      pokemon.current_hp = pokemon.max_hp; // Reset current HP to max HP
       if (this.#player.team.length < 6) {
         this.#player.team = [...this.#player.team, {...pokemon}];
     }

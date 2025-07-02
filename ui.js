@@ -172,8 +172,15 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     renderSwitchPanel();
   }
 
+  if (snap.phase === Phase.LOSS) {
+    showLossScreen();
+  }
+ 
   if (snap.phase === Phase.RESULT) {
-    buildSelection(snap.currentEnemy.team);
+    if (snap.result === "victory") {
+      buildSelection(snap.currentEnemy.team);
+    }
+    
     // Hide the switch panel outside of battle
     document.getElementById("switch-panel").classList.add("hidden");
     document.getElementById("battle-screen").classList.add("hidden");
@@ -217,6 +224,51 @@ function renderSwitchPanel() {
   });
 
   document.getElementById("switch-panel").classList.remove("hidden");
+}
+
+function showLossScreen() {
+  // Hide everything else
+  document.getElementById("battle-screen").classList.add("hidden");
+  document.getElementById("pokemon-selection").classList.add("hidden");
+  document.getElementById("switch-panel").classList.add("hidden");
+  document.getElementById("pre-battle-screen").classList.add("hidden");
+
+  // Set identity name
+  const identity = document.getElementById("identity-name").textContent;
+  document.getElementById("loss-name").textContent = identity;
+
+  // Show the loss screen
+  document.getElementById("loss-screen").classList.remove("hidden");
+}
+
+document.getElementById("play-again-loss").addEventListener("click", () => {
+  location.reload();
+});
+
+function buildSelection(enemyTeam) {
+  // Make sure screens are swapped
+  $battleScreen.classList.add("hidden");
+  $selectionBlock.classList.remove("hidden");
+  $selectionGrid.innerHTML = "";
+  $selectionConf.classList.add("hidden");
+  $nextBattleBtn.disabled = true; // lock "Continue" until a pick
+
+  // 2 ⟶ create a card for every opposing Pokémon
+  enemyTeam.forEach((mon, i) => {
+    const div = document.createElement("div");
+    div.className = "pokemon-card";
+    div.innerHTML = `
+      <img src="${spriteUrl(mon)}" alt="${mon.name}">
+      <h4>${mon.name}</h4>
+      <button data-i="${i}">Choose</button>`;
+    div.querySelector("button").onclick = async () => {
+      await game.addToTeam(mon);
+      $selectionMsg.textContent = `You chose ${mon.name}! Great choice.`;
+      $selectionConf.classList.remove("hidden");
+      $nextBattleBtn.disabled = false;
+    };
+    $selectionGrid.appendChild(div);
+  });
 }
 
 // Starts the game state
