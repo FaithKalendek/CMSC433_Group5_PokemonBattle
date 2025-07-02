@@ -60,9 +60,9 @@ export const Api = {
   clearTeam: (playerId) => request("clear_player_team.php", { playerId }),
   genRandomTeam: (num_pokemon, team, character_id) =>
     request("generate_random_team.php", { num_pokemon, team, character_id }),
-  turnOrder: (attacker_id, defender_id) =>
-    request("calculate_turn_order.php", { attacker_id, defender_id }),
-  attack: (attackerId, defenderId, moveName) =>
-    request("calculate_attack.php", { attackerId, defenderId, moveName }),
-  pickRandomMove: (pokemonId) => request("pick_random_move.php", { pokemonId }),
+  turnOrder: (attacker_id, defender_id, attacker_side) =>
+    request("calculate_turn_order.php", { attacker_id, defender_id, attacker_side }).then(r => Array.isArray(r) ? r[0].first : r.first),
+  attack: (attackerId, defenderId, moveId, isPlayerAttack, playerId, opponentId) =>
+    request("calculate_attack.php", { attackerId, defenderId, moveId, isPlayerAttack, playerId, opponentId }),
+  pickRandomMove: (pokemon_id) => request("pick_random_move.php", { pokemon_id }),
 };

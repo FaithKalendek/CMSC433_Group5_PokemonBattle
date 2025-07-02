@@ -138,41 +138,44 @@ export class GameState {
   async #runTurn() {
     if (this.#player.choice == null) return;
 
-    const playerPokemon = this.#player.team[0];
-    const enemyPokemon = this.#currentEnemy.team[0];
+    const playerPokemon = this.#player.team[this.#player.active];
+    const enemyPokemon = this.#currentEnemy.team[this.#currentEnemy.active];
+
+    const moveId = playerPokemon.move_ids[this.#player.choice];
+    if (moveId == null) {
+      console.error("Invalid move selected.");
+      return;
+    }
+
+
 
     // Turn order
-    const first = await Api.turnOrder(playerPokemon.id, enemyPokemon.id);
-    let result;
+    const first = await Api.turnOrder(playerPokemon.id, enemyPokemon.id, "player");
+    let result, attackerIsPlayer;
 
-    if (first == playerPokemon) {
-      result = await Api.attack(playerPokemon, enemyPokemon);
+    if (first === "attacker") {
+        attackerIsPlayer = true;
+        result = await Api.attack(playerPokemon.id, enemyPokemon.id, moveId, true, this.#player.id, this.#player.playerRank + 1);
+
+        enemyPokemon.current_hp = result.new_hp ?? (enemyPokemon.current_hp - result.damage);
+        if (enemyPokemon.current_hp <= 0) {
+          this.#currentEnemy.active++;
+        }
+
     } else {
-      result = await Api.attack(enemyPokemon, playerPokemon);
+        attackerIsPlayer = false;
+        const { move_id: enemyMoveId} = Array.isArray(await Api.pickRandomMove(enemyPokemon.id)) ? (await Api.pickRandomMove(enemyPokemon.id))[0] : await Api.pickRandomMove(enemyPokemon.id);
+
+        result = await Api.attack(enemyPokemon.id, playerPokemon.id, enemyMoveId, false, this.#player.id, this.#player.playerRank + 1);
+
+        playerPokemon.current_hp = result.new_hp ?? (playerPokemon.current_hp - result.damage);
+        if (playerPokemon.current_hp <= 0) {
+          this.#player.active++;
+        }
     }
 
-    enemyPokemon.hp -= result.damage;
-    // Check if the enemy pokemon is defeated
-    if (enemyPokemon.hp <= 0) {
-      this.#currentEnemy.active++;
-      // Check if the enemy team is defeated
-      if (this.#currentEnemy.active >= this.#currentEnemy.team.length) {
-        this.#setPhase(Phase.RESULT);
-        return;
-      }
-    }
-    playerPokemon.hp -= result.damage;
-    // Check if the player pokemon is defeated
-    if (playerPokemon.hp <= 0) {
-      this.#player.active++;
-      // Check if the player team is defeated
-      if (this.#player.active >= this.#player.team.length) {
-        this.#setPhase(Phase.RESULT);
-        return;
-      }
-    }
-    // Reset player choice for next turn
     this.#player.choice = null;
+    this.#dispatch();
   }
 
   // Select move logic
