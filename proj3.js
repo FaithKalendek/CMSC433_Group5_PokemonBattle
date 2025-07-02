@@ -162,7 +162,7 @@ export class GameState {
     );
     let result, attackerIsPlayer;
 
-    if (first === "attacker") {
+    if (first === "attacker") { // player attacks first
       result = await Api.attack(
         playerPokemon.pokemon_id,
         enemyPokemon.pokemon_id,
@@ -171,9 +171,9 @@ export class GameState {
         this.#player.id,
         enemyId
       );
-      console.log(result);
       attackerIsPlayer = true;
-    } else {
+      console.log("player attack result:", result);
+    } else { // enemy attacks first
       const pick = await Api.pickRandomMove(enemyPokemon.pokemon_id);
       console.log(pick);
       const enemyMoveId = Array.isArray(pick) ? pick[0].move_id : pick.move_id;
@@ -185,11 +185,10 @@ export class GameState {
         this.#player.id,
         enemyId
       );
-      console.log(result);
       attackerIsPlayer = false;
+        console.log("enemy attack result:", result);
     }
 
-    console.log("attack result:", result);
 
     // Check if both Pokémon are still alive
     if (playerPokemon.hp > 0 && enemyPokemon.hp > 0) {
