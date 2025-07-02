@@ -220,7 +220,7 @@ export class GameState {
          const enemyMoveId = Array.isArray(pick)
            ? pick[0].move_id
            : pick.move_id;
-         result = await Api.attack(
+         const enemyResult = await Api.attack(
            enemyPokemon.pokemon_id,
            playerPokemon.pokemon_id,
            enemyMoveId,
@@ -229,6 +229,7 @@ export class GameState {
            enemyId
          );
         console.log("Enemy attack result:", enemyResult);
+        this.#lastMoveText = enemyResult.result;
       } else {
         // Player takes a turn if enemy attacked first
         const playerResult = await Api.attack(
@@ -240,10 +241,27 @@ export class GameState {
           enemyId
         );
         console.log("Player attack result:", playerResult);
+        this.#lastMoveText = playerResult.result;
       }
     } else {
       console.log("One of the Pokémon has fainted.");
     }
+
+
+    // update player and enemy current pokemon hp again
+    const updatedPlayerPokemon = await Api.getPokemon(
+      playerPokemon.pokemon_id,
+      "player",
+      this.#player.id
+    );
+    const updatedEnemyPokemon = await Api.getPokemon(
+      enemyPokemon.pokemon_id,
+      "opponent",
+      enemyId
+    );
+    // Update the player's and enemy's current HP
+    Object.assign(playerPokemon, updatedPlayerPokemon[0]);
+    Object.assign(enemyPokemon, updatedEnemyPokemon[0]);
 
     const resultObject = Array.isArray(result) ? result[0] : result;
     this.#lastMoveText = resultObject.result;
