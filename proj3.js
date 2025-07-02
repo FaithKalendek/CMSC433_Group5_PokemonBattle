@@ -189,9 +189,28 @@ export class GameState {
         console.log("enemy attack result:", result);
     }
 
+    const playerHpUpdate = await Api.getPokemon(
+      playerPokemon.pokemon_id,
+      "player",
+      this.#player.id
+    );
+
+    const enemyHpUpdate = await Api.getPokemon(
+      enemyPokemon.pokemon_id,
+      "opponent",
+      enemyId
+    );
+
+    // Update the player's and enemy's current HP
+    Object.assign(playerPokemon, playerHpUpdate[0]);
+    Object.assign(enemyPokemon, enemyHpUpdate[0]);
+
+    this.#lastMoveText = result.result;
+    this.#dispatch(); 
+
 
     // Check if both Pokémon are still alive
-    if (playerPokemon.hp > 0 && enemyPokemon.hp > 0) {
+    if (playerPokemon.current_hp > 0 && enemyPokemon.current_hp > 0) {
       if (attackerIsPlayer) {
         // Enemy takes a turn if player attacked first
         const enemyMoveId = enemyPokemon.move_ids[enemyPokemon.choice];
@@ -217,27 +236,6 @@ export class GameState {
     const resultObject = Array.isArray(result) ? result[0] : result;
     this.#lastMoveText = resultObject.result;
 
-    if (first === "attacker") {
-      console.log("Player attacked first");
-      enemyPokemon.current_hp =
-        resultObject.new_hp ?? enemyPokemon.current_hp - resultObject.damage;
-      if (enemyPokemon.current_hp <= 0) {
-        console.log("Enemy defeated");
-        this.#currentEnemy.active++;
-        if (this.#currentEnemy.active >= this.#currentEnemy.team.length) {
-          this.#setPhase(Phase.RESULT);
-          return;
-        }
-      } else {
-        playerPokemon.current_hp =
-          resultObject.new_hp ?? playerPokemon.current_hp - resultObject.damage;
-        if (playerPokemon.current_hp <= 0) {
-          console.log("Player defeated");
-          this.#setPhase(Phase.RESULT);
-          return;
-        }
-      }
-    }
 
     this.#player.choice = null;
     this.#dispatch();

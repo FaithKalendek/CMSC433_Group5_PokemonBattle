@@ -45,8 +45,8 @@ export async function request(path, params = {}) {
 // Api object
 export const Api = {
   // Read functions
-  getPokemon: (id = null) =>
-    request(`get_pokemon.php${pokemon_id ? `?id=${pokemon_id}` : ""}`),
+  getPokemon: (pokemon_id = null, team, character_id) =>
+    request("get_pokemon.php", { pokemon_id, team, character_id }),
   getMove: (move_id) => request(`get_move.php?move_id=${move_id}`),
 
   // Write / Actions
