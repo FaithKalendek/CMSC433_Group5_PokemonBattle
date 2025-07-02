@@ -63,12 +63,14 @@ export class GameState {
     if (!avatarUrl) {
       avatarUrl = " ";
     } else {
-      // Validate the avatar URL
-      try {
-        new URL(avatarUrl);
-      } catch (e) {
+      // Accept both absolute and relative URLs
+      if (
+        typeof avatarUrl !== "string" ||
+        avatarUrl.trim() === "" ||
+        avatarUrl.includes(" ") // crude check for accidental blank
+      ) {
         console.error("Invalid avatar URL:", avatarUrl);
-        avatarUrl = " "; // Fallback to a default avatar
+        avatarUrl = "images/ambitiousrookie.png";
       }
       // Api call so that the player's name and avatar are added to the database
       this.#player.avatarUrl = avatarUrl;
