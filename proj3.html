@@ -315,39 +315,6 @@
       }
     });
 
-    // Example team with up to 6 Pokémon
-    const playerTeam = [
-      { name: "Charmander" },
-      { name: "Bulbasaur" },
-      { name: "Pidgey" }
-    ];
-
-    function renderSwitchPanel(activeIndex = 0) {
-      const container = document.getElementById("team-roster");
-      container.innerHTML = "";
-
-      playerTeam.forEach((poke, i) => {
-        const btn = document.createElement("button");
-        btn.className = "switch-btn";
-        btn.textContent = poke.name;
-
-        // Disable the button if it's already active
-        if (i === activeIndex) {
-          btn.disabled = true;
-          btn.style.opacity = "0.5";
-        }
-
-        btn.addEventListener("click", () => {
-          console.log(`Switching to: ${poke.name}`);
-          // Call switch logic here (e.g., update avatar, moves, etc.)
-        });
-
-        container.appendChild(btn);
-      });
-
-      // Show the panel
-      document.getElementById("switch-panel").classList.remove("hidden");
-    }
     function showVictoryScreen() {
       // Hide other game sections
       document.getElementById('battle-screen').classList.add('hidden');
