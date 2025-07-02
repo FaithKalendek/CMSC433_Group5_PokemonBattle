@@ -110,6 +110,9 @@ export class GameState {
       return;
     }
 
+    this.#lastMoveText = "";
+    this.#result = "";
+
 
 
     switch (this.#player.playerRank) {
@@ -183,6 +186,8 @@ export class GameState {
   }
 
   async #runTurn() {
+    let result;
+    let result2; 
     const enemyId = this.#player.playerRank + 1;
     if (this.#player.choice == null) return;
 
@@ -205,7 +210,7 @@ export class GameState {
       enemyPokemon.id,
       "player"
     );
-    let result, attackerIsPlayer;
+    let  attackerIsPlayer;
 
     if (first === "attacker") {
       // player attacks first
@@ -256,10 +261,6 @@ export class GameState {
     Object.assign(playerPokemon, playerHpUpdate[0]);
     Object.assign(enemyPokemon, enemyHpUpdate[0]);
 
-    console.log(playerPokemon, enemyPokemon);
-
-    this.#lastMoveText = result.result;
-
     // Check if both Pokémon are still alive
     if (playerPokemon.current_hp > 0 && enemyPokemon.current_hp > 0) {
       if (attackerIsPlayer) {
@@ -269,7 +270,7 @@ export class GameState {
         const enemyMoveId = Array.isArray(pick)
           ? pick[0].move_id
           : pick.move_id;
-        const enemyResult = await Api.attack(
+         result2 = await Api.attack(
           enemyPokemon.pokemon_id,
           playerPokemon.pokemon_id,
           enemyMoveId,
@@ -277,13 +278,12 @@ export class GameState {
           this.#player.id,
           enemyId
         );
-        console.log("Enemy attack result:", enemyResult);
-        // After enemy's counterattack
-        console.log("DEBUG: enemyResult:", enemyResult);
-        this.#lastMoveText = result[0].result + "\n" + enemyResult[0].result;
+
+        // After enemy counterattacks
+        this.#lastMoveText = result.result + "\n" + result2.result;
       } else {
         // Player takes a turn if enemy attacked first
-        const playerResult = await Api.attack(
+         result2 = await Api.attack(
           playerPokemon.pokemon_id,
           enemyPokemon.pokemon_id,
           moveId,
@@ -291,10 +291,8 @@ export class GameState {
           this.#player.id,
           enemyId
         );
-        console.log("Player attack result:", playerResult);
         // After player's counterattack
-        console.log("DEBUG: playerResult:", playerResult);
-        this.#lastMoveText = playerResult[0].result + "\n" + result[0].result;
+        this.#lastMoveText = result.result + "\n" + result2.result; 
       }
     } else {
       console.log("One of the Pokémon has fainted.");
