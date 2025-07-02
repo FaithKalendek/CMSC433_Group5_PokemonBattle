@@ -15,4 +15,10 @@ $query = $pdo->prepare("
     VALUES (:player_name, :avatar_url)");
 $query->execute([":player_name"=> $player_name,":avatar_url"=> $avatar_url]);
 
+// Added to make sure player id is returned
+header('Content-Type: application/json');
+echo json_encode([
+    "player_id" => $pdo->lastInsertId(),
+])
+
 ?>

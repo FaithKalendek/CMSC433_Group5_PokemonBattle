@@ -42,7 +42,7 @@
       <div class="identity-grid">
         <!-- Ambitious Rookie -->
         <div class="identity-card" data-identity="rookie">
-          <img src="proj3_images/avatars/rookie.png" alt="Ambitious Rookie">
+          <img src="images/ambitiousrookie.png" alt="Ambitious Rookie">
           <h4>The Ambitious Rookie</h4>
           <div class="text-box">
             <p class="blurb">
@@ -54,7 +54,7 @@
 
         <!-- Curious Scholar -->
         <div class="identity-card" data-identity="scholar">
-          <img src="proj3_images/avatars/scholar.png" alt="Curious Scholar">
+          <img src="images/curiousscholar.png" alt="Curious Scholar">
           <h4>The Curious Scholar</h4>
           <div class="text-box">
             <p class="blurb">
@@ -66,7 +66,7 @@
 
         <!-- Wild Wanderer -->
         <div class="identity-card" data-identity="wanderer">
-          <img src="proj3_images/avatars/wanderer.png" alt="Wild Wanderer">
+          <img src="images/wildwanderer.png" alt="Wild Wanderer">
           <h4>The Wild Wanderer</h4>
           <div class="text-box">
             <p class="blurb">
@@ -78,7 +78,7 @@
 
         <!-- Joyful Beginner -->
         <div class="identity-card" data-identity="beginner">
-          <img src="proj3_images/avatars/beginner.png" alt="Joyful Beginner">
+          <img src="images/joyfulbeginner.png" alt="Joyful Beginner">
           <h4>The Joyful Beginner</h4>
           <div class="text-box">
             <p class="blurb">
@@ -123,19 +123,31 @@
 
   <!-- Attack Buttons -->
   <section id="action-panel">
-    <button class="move-btn">Attack 1</button>
-    <button class="move-btn">Attack 2</button>
-    <button class="move-btn">Attack 3</button>
-    <button class="move-btn">Attack 4</button>
+    <div class="tooltip">
+      <button class="move-btn">Attack 1</button>
+      <span class="tooltiptext">Growl: The user growls in an endearing way, making opposing Pokémon less wary. Lowers Attack. Power: —, Accuracy: 100%</span>
+    </div>
+    <div class="tooltip">
+      <button class="move-btn">Attack 2</button>
+      <span class="tooltiptext">Ember: A small flame is shot at the foe. May cause a burn. Power: 40, Accuracy: 100%</span>
+    </div>
   </section>
 
   <!-- Status Updates -->
   <section id="status-box">
     <p>Welcome to Pokémon Battle!</p>
   </section>
+
+  <!-- Pokémon Switch Panel -->
+<section id="switch-panel" class="hidden">
+  <h3>Switch Pokémon</h3>
+  <div class="team-roster" id="team-roster">
+    <!-- Pokémon buttons will be inserted here dynamically -->
+  </div>
+</section>
+
 </main>
-
-
+  
   <!-- Pokémon Selection Screen -->
   <section id="pokemon-selection" class="hidden">
     <div class="text-box">
@@ -151,6 +163,32 @@
     </div>
   </section>
 
+  <!-- Final Victory Screen -->
+<section id="victory-screen" class="hidden">
+  <div class="text-box victory-box">
+    <h2> Congratulations, Trainer!</h2>
+    <p>You’ve conquered all 10 opponents and emerged victorious from the Indigo Training Program.</p>
+
+    <div class="certificate">
+      <h3>Certificate of Mastery</h3>
+      <p>This certifies that</p>
+      <h2 id="cert-name">[Trainer Title]</h2>
+      <p>has successfully completed the Indigo Training Program and demonstrated exceptional strategic skill and adaptability in Pokémon battle.</p>
+    </div>
+    <button id="play-again">Play Again</button>
+  </div>
+</section>
+
+<!-- Pre-Battle Dialogue Screen -->
+<section id="pre-battle-screen" class="hidden">
+  <div class="text-box prebattle-box">
+    <img id="prebattle-sprite" src="" alt="Opponent Trainer" class="prebattle-sprite">
+    <p id="prebattle-dialogue"></p>
+    <button id="start-battle-btn">Begin Battle</button>
+  </div>
+</section>
+
+
   <!-- JavaScript -->
   <script>
     // Identity story blurbs for each trainer
@@ -161,12 +199,26 @@
       beginner: "Some people say beginners are easy to beat. Let them. You’re not here to impress anyone—you’re here to learn, to grow, and to enjoy every moment alongside your Pokémon. The Training Program may be tough, but your excitement is unstoppable. Even your opponents can’t help but smile when you enter the arena."
     };
 
+    const opponents = [
+  { name: "Youngster Joey",  sprite: "images/n.png"  },
+  { name: "Lass Ellie",      sprite: "images/ellie.png" },
+  { name: "PokéManiac Brent",sprite: "images/brent.png" },
+  { name: "Ace Trainer Chad",sprite: "images/chad.png" },
+  { name: "Ace Trainer Quinn",sprite:"images/quinn.png" },
+  { name: "Lt. Surge",       sprite: "images/surge.png" },
+  { name: "Team Rocket",     sprite: "images/rocket.png"},
+  { name: "Gym Leader Misty",sprite: "images/misty.png" },
+  { name: "Gym Leader Brock",sprite: "images/brock.png" },
+  { name: "Champion Blue",   sprite: "images/blue.png"  }
+];
+   let currentOpponent = 0;
+
     // Choosing identity
     document.querySelectorAll('.select-identity').forEach(button => {
       button.addEventListener('click', () => {
         const card = button.closest('.identity-card');
         const identityKey = card.dataset.identity;
-        const identityName = card.querySelector('h4').textContent;
+        const identityName = card.querySelector('h4').textContent.slice(4).toLocaleLowerCase().replace(/\s+/g,""); 
 
         document.getElementById('identity-name').textContent = identityName;
         document.getElementById('identity-snippet').textContent = identitySnippets[identityKey];
@@ -180,7 +232,7 @@
     // Go to battle screen
     document.getElementById('start-battle').addEventListener('click', () => {
       document.getElementById('intro-screen').classList.add('hidden');
-      document.getElementById('battle-screen').classList.remove('hidden');
+      showPreBattleScreen(opponents[0].name, opponents[0].sprite);
     });
 
     const defeatedPokemon = [
@@ -223,9 +275,120 @@
     // Go to next battle
     document.getElementById('next-battle').addEventListener('click', () => {
       document.getElementById('pokemon-selection').classList.add('hidden');
-      document.getElementById('battle-screen').classList.remove('hidden');
       document.getElementById('selection-confirmation').classList.add('hidden');
+      currentOpponent++;
+
+      if (currentOpponent >= opponents.length) {
+        showVictoryScreen();
+      } else {
+     
+        showPreBattleScreen(
+        opponents[currentOpponent].name,
+        opponents[currentOpponent].sprite
+     );
+   }
+});
+
+   // Example team with up to 6 Pokémon
+const playerTeam = [
+  { name: "Charmander" },
+  { name: "Bulbasaur" },
+  { name: "Pidgey" }
+];
+
+function renderSwitchPanel(activeIndex = 0) {
+  const container = document.getElementById("team-roster");
+  container.innerHTML = "";
+
+  playerTeam.forEach((poke, i) => {
+    const btn = document.createElement("button");
+    btn.className = "switch-btn";
+    btn.textContent = poke.name;
+
+    // Disable the button if it's already active
+    if (i === activeIndex) {
+      btn.disabled = true;
+      btn.style.opacity = "0.5";
+    }
+
+    btn.addEventListener("click", () => {
+      console.log(`Switching to: ${poke.name}`);
+      // Call switch logic here (e.g., update avatar, moves, etc.)
     });
+
+    container.appendChild(btn);
+  });
+
+  // Show the panel
+  document.getElementById("switch-panel").classList.remove("hidden");
+}
+function showVictoryScreen() {
+  // Hide other game sections
+  document.getElementById('battle-screen').classList.add('hidden');
+  document.getElementById('pokemon-selection').classList.add('hidden');
+  document.getElementById('switch-panel').classList.add('hidden');
+
+  // Set certificate identity title (e.g., "The Curious Scholar")
+  const identity = document.getElementById('identity-name').textContent;
+  document.getElementById('cert-name').textContent = identity;
+
+  // Show the final victory screen
+  document.getElementById('victory-screen').classList.remove('hidden');
+}
+
+// Play Again button — reloads the page
+document.getElementById('play-again').addEventListener('click', () => {location.reload();
+});
+
+// Map pre-battle dialogue based on opponent name
+const trainerDialogue = {
+  "Youngster Joey": "Whoa! You’re new too? Awesome! Let’s see who’s got the better starter skills!",
+  "Lass Ellie": "Ooo, you’ve already beaten a few people? I like your vibe. Let’s make this fun!",
+  "PokéManiac Brent": "So you’ve survived the easy battles. Things are about to get... weird.",
+  "Ace Trainer Chad": "Not bad, rookie. Most people don’t get this far. Think you’ve got what it takes?",
+  "Ace Trainer Quinn": "You’ve shown some real promise. But this is where the real competitors shine.",
+  "Lt. Surge": "You’ve got spark, kid—but let’s see if you’ve got the voltage to back it up!",
+  "Team Rocket": "You’ve been steamrolling everyone, huh? Well prepare for trouble—and make it double!",
+  "Gym Leader Misty": "You’ve made it far, but this is where most beginners wash out. Ready for a real test?",
+  "Gym Leader Brock": "I’ve watched your battles. You’ve grown stronger—but strength without control means nothing.",
+  "Champion Blue": "9 wins, huh? Not bad for a newbie. But if you want to graduate, you’ll have to beat the best."
+};
+
+// Show pre-battle dialogue screen
+function showPreBattleScreen(opponentName, spritePath) {
+  // Set sprite and dialogue
+  document.getElementById('prebattle-sprite').src = spritePath;
+  document.getElementById('prebattle-sprite').alt = opponentName;
+  document.getElementById('prebattle-dialogue').textContent = trainerDialogue[opponentName] || "Ready for battle.";
+
+  // Hide everything else
+  document.getElementById('intro-screen')?.classList.add('hidden');
+  document.getElementById('battle-screen').classList.add('hidden');
+  document.getElementById('victory-screen')?.classList.add('hidden');
+  document.getElementById('pokemon-selection').classList.add('hidden');
+
+  // Show dialogue screen
+  document.getElementById('pre-battle-screen').classList.remove('hidden');
+}
+
+// Hook up the "Begin Battle" button
+document.getElementById('start-battle-btn').addEventListener('click', () => {
+  document.getElementById('pre-battle-screen').classList.add('hidden');
+  document.getElementById('battle-screen').classList.remove('hidden');
+  renderSwitchPanel();  
+});
+
+const moves = [
+  { name: "Growl", desc: "The user growls...", power: null, accuracy: 100 },
+  { name: "Ember", desc: "Shoots a flame...", power: 40, accuracy: 100 }
+];
+
+document.querySelectorAll('.tooltip').forEach((tooltipDiv, index) => {
+  const span = tooltipDiv.querySelector('.tooltiptext');
+  const move = moves[index];
+  span.textContent = `${move.name}: ${move.desc} Power: ${move.power ?? '—'}, Accuracy: ${move.accuracy}%`;
+});
+
   </script>
 <script type="module" src="ui.js"></script>
 </body>
