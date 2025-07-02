@@ -180,6 +180,8 @@ export class GameState {
       );
       attackerIsPlayer = true;
       console.log("player attack result:", result);
+      // After player attacks first
+      console.log("DEBUG: result (player attack):", result);
     } else {
       // enemy attacks first
       const pick = await Api.pickRandomMove(enemyPokemon.pokemon_id);
@@ -195,6 +197,8 @@ export class GameState {
       );
       attackerIsPlayer = false;
       console.log("enemy attack result:", result);
+      // After enemy attacks first
+      console.log("DEBUG: result (enemy attack):", result);
     }
 
     const playerHpUpdate = await Api.getPokemon(
@@ -235,7 +239,9 @@ export class GameState {
           enemyId
         );
         console.log("Enemy attack result:", enemyResult);
-        this.#lastMoveText = enemyResult.result;
+        // After enemy's counterattack
+        console.log("DEBUG: enemyResult:", enemyResult);
+        this.#lastMoveText = result[0].result + "\n" + enemyResult[0].result;
       } else {
         // Player takes a turn if enemy attacked first
         const playerResult = await Api.attack(
@@ -247,7 +253,9 @@ export class GameState {
           enemyId
         );
         console.log("Player attack result:", playerResult);
-        this.#lastMoveText = playerResult.result;
+        // After player's counterattack
+        console.log("DEBUG: playerResult:", playerResult);
+        this.#lastMoveText = playerResult[0].result + "\n" + result[0].result;
       }
     } else {
       console.log("One of the Pokémon has fainted.");
@@ -274,8 +282,8 @@ export class GameState {
       return;
     }
 
-    const resultObject = Array.isArray(result) ? result[0] : result;
-    this.#lastMoveText = resultObject.result;
+    // const resultObject = Array.isArray(result) ? result[0] : result;
+    // this.#lastMoveText = resultObject.result;
 
     this.#player.choice = null;
     this.#dispatch();

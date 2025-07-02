@@ -181,7 +181,7 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     }
 
     if (snap.lastMoveText) {
-      $statusTxt.textContent = snap.lastMoveText;
+      $statusTxt.innerHTML = snap.lastMoveText.replace(/\n/g, "<br>");
     } else {
       $statusTxt.textContent = `${p.name} HP ${p.current_hp} vs ${e.name} HP ${e.current_hp}`;
     }
