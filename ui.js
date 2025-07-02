@@ -1,6 +1,22 @@
 import { game, Phase } from "./proj3.js";
 import { Api } from "./api.js";
 
+/* ---------- Opponent Trainer Sprite Lookup ---------- */
+const opponents = [
+  { name: "Youngster Joey",  sprite: "images/youngster.png"  },
+  { name: "Lass Ellie",      sprite: "images/lass.png" },
+  { name: "PokéManiac Brent",sprite: "images/pokemaniac.png" },
+  { name: "Ace Trainer Chad",sprite: "images/acetrainerchad.png" },
+  { name: "Ace Trainer Quinn",sprite:"images/acetrainerquinn.png" },
+  { name: "Lt. Surge",       sprite: "images/ltsurge.png" },
+  { name: "Team Rocket",     sprite: "images/teamrocket.png"},
+  { name: "Gym Leader Misty",sprite: "images/misty.png" },
+  { name: "Gym Leader Brock",sprite: "images/brock.png" },
+  { name: "Champion Blue",   sprite: "images/championblue.png" }
+];
+
+
+
 /* ---------- DOM references ---------- */
 const $identityGrid = document.querySelector(".identity-selection");
 const $identitySum = document.getElementById("identity-summary");
@@ -8,6 +24,7 @@ const $identityName = document.getElementById("identity-name");
 const $identityTxt = document.getElementById("identity-snippet");
 const $startBtn = document.getElementById("start-battle");
 const $pAvatar = document.getElementById("player-trainer-sprite");
+const $opponentTrainerAvatar = document.getElementById("opponent-trainer-sprite");
 
 const $playerHp = document.getElementById("player-hp");
 const $enemyHp = document.getElementById("opponent-hp");
@@ -25,12 +42,15 @@ const $selectionConf = document.getElementById("selection-confirmation");
 const $nextBattleBtn = document.getElementById("next-battle");
 const moveBtns = [...document.querySelectorAll("#action-panel .move-btn")];
 
-function spriteUrl(name) {
-  return `images/${name.name}.gif`;
+function spriteUrl(pokemon) {
+  // expects a pokemon object with a .name property
+  // Lowercase and remove spaces/special chars for file path
+  const cleanName = pokemon.name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  return `images/${cleanName}.gif`;
 }
 
 function trainerSpriteUrl(name) {
-  return `images/${name}.png`;
+  return name.sprite;
 }
 
 function pct(hp, max) {
@@ -104,12 +124,21 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     $playerHp.style.width = `${(p.current_hp / p.max_hp) * 100}%`;
     $enemyHp.style.width = `${(e.current_hp / e.max_hp) * 100}%`;
 
+    // Update player and opponent Pokémon sprites
     $playerMonImg.src = spriteUrl(p);
     $playerMonImg.alt = p.name;
     $enemyMonImg.src = spriteUrl(e);
     $enemyMonImg.alt = e.name;
+
+    // Update player trainer avatar
     $pAvatar.src = trainerSpriteUrl(snap.player.avatarUrl);
     $pAvatar.alt = snap.player.name;
+
+    // Update opponent trainer avatar if available in state
+    if ($opponentTrainerAvatar && snap.currentEnemy.avatarUrl) {
+      $opponentTrainerAvatar.src = trainerSpriteUrl(snap.currentEnemy.avatarUrl);
+      $opponentTrainerAvatar.alt = snap.currentEnemy.name || "Opponent Trainer";
+    }
 
     if (snap.lastMoveText) {
       $statusTxt.textContent = snap.lastMoveText;
