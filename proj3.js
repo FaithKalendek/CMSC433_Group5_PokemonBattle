@@ -205,6 +205,8 @@ export class GameState {
     Object.assign(playerPokemon, playerHpUpdate[0]);
     Object.assign(enemyPokemon, enemyHpUpdate[0]);
 
+    console.log(playerPokemon, enemyPokemon);
+
     this.#lastMoveText = result.result;
     this.#dispatch(); 
 
@@ -217,7 +219,10 @@ export class GameState {
         const enemyResult = await Api.attack(
           enemyPokemon.pokemon_id,
           playerPokemon.pokemon_id,
-          enemyMoveId
+          enemyMoveId, 
+          false, 
+          this.#player.id,
+          enemyId
         );
         console.log("Enemy attack result:", enemyResult);
       } else {
@@ -225,7 +230,10 @@ export class GameState {
         const playerResult = await Api.attack(
           playerPokemon.pokemon_id,
           enemyPokemon.pokemon_id,
-          moveId
+          moveId, 
+          true,
+          this.#player.id,
+          enemyId
         );
         console.log("Player attack result:", playerResult);
       }
