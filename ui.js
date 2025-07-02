@@ -33,6 +33,21 @@ function getOpponentSpriteUrl(name) {
   return opp ? opp.sprite : "images/default_opponent.png";
 }
 
+
+
+/* Music */ 
+const music = {
+  [Phase.TITLE]: new Audio("audio/title.mp3"),
+  [Phase.BATTLE]: new Audio("audio/battle.mp3"),
+  [Phase.LOSS]: new Audio("audio/loss.mp3"),
+  [Phase.RESULT]: new Audio("audio/result.mp3"),
+};
+
+music[Phase.TITLE].loop = true;
+music[Phase.BATTLE].loop = true;
+music[Phase.RESULT].loop = true;
+
+
 /* ---------- DOM references ---------- */
 const $identityGrid = document.querySelector(".identity-selection");
 const $identitySum = document.getElementById("identity-summary");
@@ -57,6 +72,9 @@ const $selectionMsg = document.getElementById("selection-message");
 const $selectionConf = document.getElementById("selection-confirmation");
 const $nextBattleBtn = document.getElementById("next-battle");
 const moveBtns = [...document.querySelectorAll("#action-panel .move-btn")];
+
+// current music track
+let currentTrack = null;
 
 function spriteUrl(pokemon) {
   // expects a pokemon object with a .name property
@@ -135,6 +153,7 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   console.log("snap.player:", snap.player);
   console.log("snap.player.avatarUrl:", snap.player.avatarUrl);
   console.log("Setting $pAvatar.src to:", snap.player.avatarUrl || "images/ambitiousrookie.png");
+  playMusic(snap.phase);
 
   if (snap.phase === Phase.BATTLE) {
     const p = snap.player.team[snap.player.active];
@@ -267,6 +286,30 @@ function buildSelection(enemyTeam) {
     };
     $selectionGrid.appendChild(div);
   });
+}
+
+
+function playMusic(phase) {
+  const next = music[phase];
+  if (next === currentTrack) return;
+
+  if (currentTrack) {
+    const t = currentTrack; 
+    const fade = setInterval(() => {
+      t.volume -= 0.05;
+      if (t.volume <= 0) {
+        t.pause();
+        t.currentTime = 0; // Reset to start
+        t.volume = 1; // Reset volume for next track
+        clearInterval(fade);
+      }
+  }, 50); 
+}
+
+if (next) setTimeout(() =>
+    // Delay before starting the next track
+  next.play().catch(console.error), 300);
+  currentTrack = next;
 }
 
 // Starts the game state
