@@ -319,7 +319,7 @@ window.addEventListener(
   () => {
     if (audioUnlocked) return;
     audioUnlocked = true;
-    playMusicFor(game.snapshot().phase);   // start whatever phase we’re in
+    playMusic(game.snapshot().phase);   // start whatever phase we’re in
   },
   { once: true }            // listener removes itself
 );
