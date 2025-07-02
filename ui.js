@@ -169,10 +169,15 @@ document.addEventListener("statechange", ({ detail: snap }) => {
 
     const active = snap.player.team[snap.player.active];
     renderMoves(active);
+
+    // Always show the switch panel during battle
+    renderSwitchPanel();
   }
 
   if (snap.phase === Phase.RESULT) {
     buildSelection(snap.currentEnemy.team);
+    // Hide the switch panel outside of battle
+    document.getElementById("switch-panel").classList.add("hidden");
   }
 
   console.log("avatarUrl in state:", snap.player.avatarUrl);
@@ -182,6 +187,37 @@ document.addEventListener("statechange", ({ detail: snap }) => {
 $nextBattleBtn.addEventListener("click", () => {
   game.next();
 });
+
+function renderSwitchPanel() {
+  const container = document.getElementById("team-roster");
+  container.innerHTML = "";
+
+  // Get the actual team and active index from the game state
+  const snap = game.snapshot();
+  const team = snap.player.team;
+  const activeIndex = snap.player.active;
+
+  team.forEach((poke, i) => {
+    const btn = document.createElement("button");
+    btn.className = "switch-btn";
+    btn.textContent = poke.name;
+
+    // Disable if already active or fainted
+    if (i === activeIndex || poke.current_hp <= 0) {
+      btn.disabled = true;
+      btn.style.opacity = "0.5";
+    }
+
+    btn.addEventListener("click", () => {
+      game.selectActive(i); // Actually switch Pokémon
+      document.getElementById("switch-panel").classList.add("hidden");
+    });
+
+    container.appendChild(btn);
+  });
+
+  document.getElementById("switch-panel").classList.remove("hidden");
+}
 
 // Starts the game state
 game.start();
