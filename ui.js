@@ -173,9 +173,7 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   }
 
   if (snap.phase === Phase.RESULT) {
-    if (snap.result === "victory") {
       buildSelection(snap.currentEnemy.team);
-    }
     
     // Hide the switch panel outside of battle
     document.getElementById("switch-panel").classList.add("hidden");
