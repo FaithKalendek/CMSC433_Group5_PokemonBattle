@@ -1,6 +1,19 @@
 import { game, Phase } from "./proj3.js";
 import { Api } from "./api.js";
 
+/* ---------- Player Trainer Sprite Lookup ---------- */
+const playerAvatars = [
+  { key: "rookie", sprite: "images/ambitiousrookie.png" },
+  { key: "scholar", sprite: "images/curiousscholar.png" },
+  { key: "wanderer", sprite: "images/wildwanderer.png" },
+  { key: "beginner", sprite: "images/joyfulbeginner.png" }
+];
+
+function getPlayerAvatarSprite(key) {
+  const found = playerAvatars.find(a => a.key === key);
+  return found ? found.sprite : "images/default_player.png";
+}
+
 /* ---------- Opponent Trainer Sprite Lookup ---------- */
 const opponents = [
   { name: "Youngster Joey",  sprite: "images/youngster.png"  },
@@ -15,7 +28,10 @@ const opponents = [
   { name: "Champion Blue",   sprite: "images/championblue.png" }
 ];
 
-
+function getOpponentSpriteUrl(name) {
+  const opp = opponents.find(o => o.name === name);
+  return opp ? opp.sprite : "images/default_opponent.png";
+}
 
 /* ---------- DOM references ---------- */
 const $identityGrid = document.querySelector(".identity-selection");
@@ -131,12 +147,12 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     $enemyMonImg.alt = e.name;
 
     // Update player trainer avatar
-    $pAvatar.src = trainerSpriteUrl(snap.player.avatarUrl);
+    $pAvatar.src = getPlayerAvatarSprite(snap.player.avatarUrl);
     $pAvatar.alt = snap.player.name;
 
     // Update opponent trainer avatar if available in state
-    if ($opponentTrainerAvatar && snap.currentEnemy.avatarUrl) {
-      $opponentTrainerAvatar.src = trainerSpriteUrl(snap.currentEnemy.avatarUrl);
+    if ($opponentTrainerAvatar && snap.currentEnemy.name) {
+      $opponentTrainerAvatar.src = getOpponentSpriteUrl(snap.currentEnemy.name);
       $opponentTrainerAvatar.alt = snap.currentEnemy.name || "Opponent Trainer";
     }
 
