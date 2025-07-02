@@ -215,7 +215,7 @@ export class GameState {
     if (playerPokemon.current_hp > 0 && enemyPokemon.current_hp > 0) {
       if (attackerIsPlayer) {
         // Enemy takes a turn if player attacked first
-        pick = await Api.pickRandomMove(enemyPokemon.pokemon_id);
+        const pick = await Api.pickRandomMove(enemyPokemon.pokemon_id);
         const enemyMoveId = Array.isArray(pick) ? pick[0].move_id : pick.move_id;
         const enemyResult = await Api.attack(
           enemyPokemon.pokemon_id,
