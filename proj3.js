@@ -138,6 +138,7 @@ export class GameState {
   }
 
   async #runTurn() {
+    const enemyId = this.#player.playerRank + 1;
     if (this.#player.choice == null) return;
 
     const playerPokemon = this.#player.team[this.#player.active];
@@ -165,7 +166,7 @@ export class GameState {
         moveId,
         true,
         this.#player.id,
-        this.#player.playerRank + 1
+        enemyId
       );
       console.log(result);
       attackerIsPlayer = true;
@@ -179,7 +180,7 @@ export class GameState {
         enemyMoveId,
         false,
         this.#player.id,
-        this.#player.playerRank + 1
+        enemyId
       );
       console.log(result);
       attackerIsPlayer = false;
