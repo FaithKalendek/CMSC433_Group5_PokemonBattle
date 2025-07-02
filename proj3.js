@@ -208,7 +208,6 @@ export class GameState {
     console.log(playerPokemon, enemyPokemon);
 
     this.#lastMoveText = result.result;
-    this.#dispatch(); 
 
 
     // Check if both Pokémon are still alive
