@@ -341,6 +341,20 @@ export class GameState {
     this.#dispatch();
   }
 
+  async addToTeam(pokemon) {
+    try {
+      await  Api.addToTeam(this.#player.id, pokemon.pokemon_id);
+
+      if (this.#player.team.length < 6) {
+        this.#player.team = [...this.#player.team, {...pokemon}];
+    }
+
+    this.#dispatch();
+  } catch (error) {
+      console.error("Error adding Pokémon to team:", error);
+    }
+  }
+
   // Sets the current game phase
   #setPhase(phase) {
     this.#phase = phase;

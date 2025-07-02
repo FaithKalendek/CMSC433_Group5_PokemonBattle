@@ -88,9 +88,7 @@ async function getMoveName(id) {
 }
 
 async function renderMoves(pokemon) {
-  console.log("Didn't pass check");
   if (!pokemon) return;
-  console.log("Passed check");
 
   // we expect pokemon.move_ids like [13, 85] (two moves)
   const ids = pokemon.move_ids || [];
