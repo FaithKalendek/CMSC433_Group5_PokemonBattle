@@ -13,14 +13,14 @@ $pdo = getPokemonPDO();
 $attacker_id = $_GET['attacker_id'];
 $defender_id = $_GET['defender_id'];
 $move_id = $_GET['move_id'];
-$is_attacker_player = ($_GET['is_attacker_player'] === 'true');
+$is_attacker_player = ($_GET['is_attacker_player'] === 'true'); // convert to boolean
 $player_id = $_GET['player_id'];
 $opponent_id = $_GET['opponent_id'];
 
 // Get attacker and defender stats from database
 // If is_attacker_player is true, get attacker from PlayerPokemon and defender from OpponentPokemon
 // Else, opposite
-if ($is_attacker_player === 'true') {
+if ($is_attacker_player) {
 
     // Get attacker from PlayerPokemon
     $query = $pdo->prepare("
@@ -53,7 +53,7 @@ if ($is_attacker_player === 'true') {
     $defender = $query->fetch(PDO::FETCH_ASSOC);    
 }
 
- If (!$attacker || !$defender) {
+if (!$attacker || !$defender) {
     echo json_encode(['error' => 'Attacker or defender not found.']);
     exit;
 }
