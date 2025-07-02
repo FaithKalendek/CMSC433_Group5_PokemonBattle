@@ -1,6 +1,38 @@
 import { game, Phase } from "./proj3.js";
 import { Api } from "./api.js";
 
+/* ---------- Player Trainer Sprite Lookup ---------- */
+const playerAvatars = [
+  { key: "rookie", sprite: "images/ambitiousrookie.png" },
+  { key: "scholar", sprite: "images/curiousscholar.png" },
+  { key: "wanderer", sprite: "images/wildwanderer.png" },
+  { key: "beginner", sprite: "images/joyfulbeginner.png" }
+];
+
+function getPlayerAvatarSprite(key) {
+  const found = playerAvatars.find(a => a.key === key);
+  return found ? found.sprite : "images/default_player.png";
+}
+
+/* ---------- Opponent Trainer Sprite Lookup ---------- */
+const opponents = [
+  { name: "Youngster Joey",  sprite: "images/youngster.png"  },
+  { name: "Lass Ellie",      sprite: "images/lass.png" },
+  { name: "PokéManiac Brent",sprite: "images/pokemaniac.png" },
+  { name: "Ace Trainer Chad",sprite: "images/acetrainerchad.png" },
+  { name: "Ace Trainer Quinn",sprite:"images/acetrainerquinn.png" },
+  { name: "Lt. Surge",       sprite: "images/ltsurge.png" },
+  { name: "Team Rocket",     sprite: "images/teamrocket.png"},
+  { name: "Gym Leader Misty",sprite: "images/misty.png" },
+  { name: "Gym Leader Brock",sprite: "images/brock.png" },
+  { name: "Champion Blue",   sprite: "images/championblue.png" }
+];
+
+function getOpponentSpriteUrl(name) {
+  const opp = opponents.find(o => o.name === name);
+  return opp ? opp.sprite : "images/default_opponent.png";
+}
+
 /* ---------- DOM references ---------- */
 const $identityGrid = document.querySelector(".identity-selection");
 const $identitySum = document.getElementById("identity-summary");
@@ -8,6 +40,7 @@ const $identityName = document.getElementById("identity-name");
 const $identityTxt = document.getElementById("identity-snippet");
 const $startBtn = document.getElementById("start-battle");
 const $pAvatar = document.getElementById("player-trainer-sprite");
+const $opponentTrainerAvatar = document.getElementById("opponent-trainer-sprite");
 
 const $playerHp = document.getElementById("player-hp");
 const $enemyHp = document.getElementById("opponent-hp");
@@ -25,12 +58,15 @@ const $selectionConf = document.getElementById("selection-confirmation");
 const $nextBattleBtn = document.getElementById("next-battle");
 const moveBtns = [...document.querySelectorAll("#action-panel .move-btn")];
 
-function spriteUrl(name) {
-  return `images/${name.name}.gif`;
+function spriteUrl(pokemon) {
+  // expects a pokemon object with a .name property
+  // Lowercase and remove spaces/special chars for file path
+  const cleanName = pokemon.name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  return `images/${cleanName}.gif`;
 }
 
 function trainerSpriteUrl(name) {
-  return `images/${name}.png`;
+  return name.sprite;
 }
 
 function pct(hp, max) {
@@ -76,8 +112,8 @@ async function renderMoves(pokemon) {
 // When the player hits the start button, their identity is set and the game state changes to battle.
 $startBtn.addEventListener("click", () => {
   const name = $identityName.textContent.trim();
-  const avatarUrl = $pAvatar.src;
-  // calls api to add player to the database and stores data in the gamestate
+  const avatarUrl = window.selectedAvatarUrl || "images/ambitiousrookie.png";
+  console.log("Adding player with avatarUrl:", avatarUrl);
   game.addPlayer(name, avatarUrl);
 });
 
@@ -95,6 +131,11 @@ document.querySelectorAll("#action-panel .move-btn").forEach((btn, i) =>
 // Used chat gpt to help make the player and enemy hp bars update.
 // Have to test this code when things are running
 document.addEventListener("statechange", ({ detail: snap }) => {
+  console.log("=== STATECHANGE ===");
+  console.log("snap.player:", snap.player);
+  console.log("snap.player.avatarUrl:", snap.player.avatarUrl);
+  console.log("Setting $pAvatar.src to:", snap.player.avatarUrl || "images/ambitiousrookie.png");
+
   if (snap.phase === Phase.BATTLE) {
     const p = snap.player.team[snap.player.active];
     const e = snap.currentEnemy.team[snap.currentEnemy.active];
@@ -102,12 +143,21 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     $playerHp.style.width = `${(p.current_hp / p.max_hp) * 100}%`;
     $enemyHp.style.width = `${(e.current_hp / e.max_hp) * 100}%`;
 
+    // Update player and opponent Pokémon sprites
     $playerMonImg.src = spriteUrl(p);
     $playerMonImg.alt = p.name;
     $enemyMonImg.src = spriteUrl(e);
     $enemyMonImg.alt = e.name;
-    $pAvatar.src = trainerSpriteUrl(snap.player.avatarUrl);
+
+    // Update player trainer avatar
+    $pAvatar.src = snap.player.avatarUrl || "images/ambitiousrookie.png";
     $pAvatar.alt = snap.player.name;
+
+    // Update opponent trainer avatar if available in state
+    if ($opponentTrainerAvatar && snap.currentEnemy.name) {
+      $opponentTrainerAvatar.src = getOpponentSpriteUrl(snap.currentEnemy.name);
+      $opponentTrainerAvatar.alt = snap.currentEnemy.name || "Opponent Trainer";
+    }
 
     if (snap.lastMoveText) {
       $statusTxt.textContent = snap.lastMoveText;
@@ -122,6 +172,8 @@ document.addEventListener("statechange", ({ detail: snap }) => {
   if (snap.phase === Phase.RESULT) {
     buildSelection(snap.currentEnemy.team);
   }
+
+  console.log("avatarUrl in state:", snap.player.avatarUrl);
 });
 
 // continue button logic
