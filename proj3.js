@@ -343,7 +343,7 @@ export class GameState {
 
   async addToTeam(pokemon) {
     try {
-      await  Api.addToTeam(this.#player.id, pokemon.pokemon_id);
+      await  Api.addToTeam("player",this.#player.id, pokemon.pokemon_id);
 
       if (this.#player.team.length < 6) {
         this.#player.team = [...this.#player.team, {...pokemon}];
