@@ -165,7 +165,7 @@ export class GameState {
       // If the player has no pokemon, generate a random pokemon
       if (this.#player.playerRank === 0) {
         // Generate a random team if the player has no pokemon
-        const playerTeam = await Api.genRandomTeam(3, "player", pid);
+        const playerTeam = await Api.genRandomTeam(2, "player", pid); 
         this.#player.team = playerTeam;
         console.log("Generated player team:");
       }
@@ -173,7 +173,7 @@ export class GameState {
       // Generate a random team for the enemy they are facing
       // The enemy id is based on the player's current level
       const enemyId = level + 1;
-      const enemyTeam = await Api.genRandomTeam(enemyId, "opponent", enemyId);
+      const enemyTeam = await Api.genRandomTeam(2, "opponent", enemyId); 
 
       // Set the teams locally
       this.#player.choice = null;
