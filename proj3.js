@@ -165,7 +165,7 @@ export class GameState {
       // If the player has no pokemon, generate a random pokemon
       if (this.#player.playerRank === 0) {
         // Generate a random team if the player has no pokemon
-        const playerTeam = await Api.genRandomTeam(1, "player", pid);
+        const playerTeam = await Api.genRandomTeam(3, "player", pid);
         this.#player.team = playerTeam;
         console.log("Generated player team:");
       }
@@ -286,7 +286,7 @@ export class GameState {
         );
 
         // After enemy counterattacks
-        this.#lastMoveText = [msg(result), msg(result2)]
+        this.#lastMoveText = [msgText(result), msgText(result2)]
           .filter(Boolean)
           .join("\n");
       } else {
@@ -300,7 +300,7 @@ export class GameState {
           enemyId
         );
         // After player's counterattack
-        this.#lastMoveText = [msg(result), msg(result2)]
+        this.#lastMoveText = [msgText(result), msgText(result2)]
           .filter(Boolean)
           .join("\n");
       }
