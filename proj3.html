@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -127,11 +126,11 @@
   <section id="action-panel">
     <div class="tooltip">
       <button class="move-btn">Move 1</button>
-      <span class="tooltiptext">Growl: The user growls in an endearing way, making opposing Pokémon less wary. Lowers Attack. Power: —, Accuracy: 100%</span>
+      <pre class="tooltiptext"></pre>
     </div>
     <div class="tooltip">
       <button class="move-btn">Move 2</button>
-      <span class="tooltiptext">Ember: A small flame is shot at the foe. May cause a burn. Power: 40, Accuracy: 100%</span>
+      <pre class="tooltiptext"></pre>
     </div>
   </section>
 
@@ -404,19 +403,18 @@
     document.getElementById('start-battle-btn').addEventListener('click', () => {
       document.getElementById('pre-battle-screen').classList.add('hidden');
       document.getElementById('battle-screen').classList.remove('hidden');
-      renderSwitchPanel();  
     });
 
-    const moves = [
-      { name: "Growl", desc: "The user growls...", power: null, accuracy: 100 },
-      { name: "Ember", desc: "Shoots a flame...", power: 40, accuracy: 100 }
-    ];
+    // const moves = [
+    //   { name: "Growl", desc: "The user growls...", power: null, accuracy: 100 },
+    //   { name: "Ember", desc: "Shoots a flame...", power: 40, accuracy: 100 }
+    // ];
 
-    document.querySelectorAll('.tooltip').forEach((tooltipDiv, index) => {
-      const span = tooltipDiv.querySelector('.tooltiptext');
-      const move = moves[index];
-      span.textContent = `${move.name}: ${move.desc} Power: ${move.power ?? '—'}, Accuracy: ${move.accuracy}%`;
-    });
+    // document.querySelectorAll('.tooltip').forEach((tooltipDiv, index) => {
+    //   const span = tooltipDiv.querySelector('.tooltiptext');
+    //   const move = moves[index];
+    //   span.textContent = `${move.name}: ${move.desc} Power: ${move.power ?? '—'}, Accuracy: ${move.accuracy}%`;
+    // });
 
   </script>
 <script type="module" src="ui.js"></script>

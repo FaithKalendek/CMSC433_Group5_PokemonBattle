@@ -68,6 +68,15 @@ $type_effectiveness = [
         'Ground' => 1,
         'Normal/Flying' => 0, // Ground no effect on Flying (immune)
     ],
+    'Normal/Flying' => [
+        'Grass' => 2,           // Flying is super effective
+        'Fire' => 1,
+        'Water' => 1,
+        'Electric' => 1,
+        'Normal' => 1,
+        'Ground' => 1,
+        'Normal/Flying' => 1,
+    ],
 ];
 
 
@@ -117,10 +126,12 @@ function calculate_dmg ($attacker, $defender, $power, $move_accuracy) {
 
 }
 
-/*Growl:
-The user growls in an endearing way, making opposing Pokémon less wary. This lowers their Attack stats by one stage.
-Power	—
-Accuracy	100 */
+/**
+ * Growl:
+ * The user growls in an endearing way, making opposing Pokémon less wary. This lowers their Attack stats by one stage.
+ * Power —
+ * Accuracy 100
+ */
 function growl ($defender, $pdo, $is_attacker_player) {
 
     // Growl decreases the defender's attack by 1 stage
@@ -134,10 +145,12 @@ function growl ($defender, $pdo, $is_attacker_player) {
     $query->execute([':new_defense_modifier' => $new_defense_modifier, ':defender_id' => $defender['id']]);
 }
 
-/*Tackle:
-A physical attack in which the user charges and slams into the foe with its whole body.
-Power	40
-Accuracy	100 */
+/**
+ * Tackle:
+ * A physical attack in which the user charges and slams into the foe with its whole body.
+ * Power 40
+ * Accuracy 100
+ */
 function tackle ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
@@ -161,10 +174,12 @@ function tackle ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Vine Whip:
-The target is struck with slender, whiplike vines to inflict damage.
-Power	45
-Accuracy	100 */
+/**
+ * Vine Whip:
+ * The target is struck with slender, whiplike vines to inflict damage.
+ * Power 45
+ * Accuracy 100
+ */
 function vine_whip ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
@@ -187,10 +202,11 @@ function vine_whip ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Growth:
-The user’s body grows all at once, raising its Attack stats by one stage.
-Power	—
-Accuracy	—
+/**
+ * Growth:
+ * The user’s body grows all at once, raising its Attack stats by one stage.
+ * Power —
+ * Accuracy —
  */
 function growth ($attacker, $pdo, $is_attacker_player) {
 
@@ -205,10 +221,12 @@ function growth ($attacker, $pdo, $is_attacker_player) {
     $query->execute([':newattack_modifier' => $new_attack_modifier, ':attacker_id' => $attacker['id']]);
 }
 
-/*Scratch:
-Hard, pointed, sharp claws rake the target to inflict damage.
-Power	40
-Accuracy	100 */
+/**
+ * Scratch:
+ * Hard, pointed, sharp claws rake the target to inflict damage.
+ * Power 40
+ * Accuracy 100
+ */
 function scratch ($attacker, $defender, $pdo, $is_attacker_player) {
   
     // Calculate damage
@@ -232,10 +250,11 @@ function scratch ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Absorb:
-A nutrient-draining attack. The user’s HP is restored by half the damage taken by the target.
-Power	20
-Accuracy	100
+/**
+ * Absorb:
+ * A nutrient-draining attack. The user’s HP is restored by half the damage taken by the target.
+ * Power 20
+ * Accuracy 100
  */
 function absorb ($attacker, $defender, $pdo, $is_attacker_player) {
 
@@ -266,10 +285,12 @@ function absorb ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Ember:
-The target is attacked with small flames.
-Power	40
-Accuracy	100 */
+/**
+ * Ember:
+ * The target is attacked with small flames.
+ * Power 40
+ * Accuracy 100
+ */
 function ember ($attacker, $defender, $pdo, $is_attacker_player) {
   
     // Calculate damage
@@ -289,10 +310,11 @@ function ember ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Tail Whip:
-The user wags its tail cutely, making opposing Pokémon less wary and lowering their Defense stat by one stage.
-Power	—
-Accuracy	100
+/**
+ * Tail Whip:
+ * The user wags its tail cutely, making opposing Pokémon less wary and lowering their Defense stat by one stage.
+ * Power —
+ * Accuracy 100
  */
 function tail_whip ($defender, $pdo, $is_attacker_player) {
 
@@ -311,10 +333,11 @@ function tail_whip ($defender, $pdo, $is_attacker_player) {
     }
 }
 
-/*Bite:
-The target is bitten with viciously sharp fangs. This may also make the target flinch (30% chance of skipping turn if target has not yet moved).
-Power	60
-Accuracy	100
+/**
+ * Bite:
+ * The target is bitten with viciously sharp fangs. This may also make the target flinch (30% chance of skipping turn if target has not yet moved).
+ * Power 60
+ * Accuracy 100
  */
 function bite ($attacker, $defender, $pdo, $is_attacker_player) {
 
@@ -345,10 +368,12 @@ function bite ($attacker, $defender, $pdo, $is_attacker_player) {
     }
 }
 
-/*Howl:
-The user howls loudly to raise its spirit, boosting its Attack stat by one stage.
-Power	—
-Accuracy	— */
+/**
+ * Howl:
+ * The user howls loudly to raise its spirit, boosting its Attack stat by one stage.
+ * Power —
+ * Accuracy —
+ */
 function howl ($attacker, $pdo, $is_attacker_player) {
 
     // Howl increases the attack modifier by 1 stage
@@ -363,10 +388,12 @@ function howl ($attacker, $pdo, $is_attacker_player) {
     
 }
 
-/*Pound:
-The target is physically pounded with a long tail, a foreleg, or the like.
-Power	40
-Accuracy	100 */
+/**
+ * Pound:
+ * The target is physically pounded with a long tail, a foreleg, or the like.
+ * Power 40
+ * Accuracy 100
+ */
 function pound ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
@@ -385,10 +412,12 @@ function pound ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Bubble Beam:
-A spray of bubbles is forcefully ejected at the target. This may also lower the target’s Speed stat by one stage (10% chance).
-Power	65
-Accuracy	100 */
+/**
+ * Bubble Beam:
+ * A spray of bubbles is forcefully ejected at the target. This may also lower the target’s Speed stat by one stage (10% chance).
+ * Power 65
+ * Accuracy 100
+ */
 function bubble_beam ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
@@ -418,10 +447,12 @@ function bubble_beam ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Water Gun:
-The target is blasted with a forceful shot of water.
-Power	40
-Accuracy	100 */
+/**
+ * Water Gun:
+ * The target is blasted with a forceful shot of water.
+ * Power 40
+ * Accuracy 100
+ */
 function water_gun ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
@@ -440,18 +471,19 @@ function water_gun ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Electro Ball:
-The user hurls an electric orb at the target. The faster the user is than the target, the greater the move’s power.
-Power	—
-Accuracy	100
-----
-r = UserSpeed ÷ TargetSpeed
-Ratio (r)	Power
-4 ≤ r      	150
-3 ≤ r < 4	120
-2 ≤ r < 3	80
-1 ≤ r < 2	60
-r < 1	40
+/**
+ * Electro Ball:
+ * The user hurls an electric orb at the target. The faster the user is than the target, the greater the move’s power.
+ * Power —
+ * Accuracy 100
+ * ----
+ * r = UserSpeed ÷ TargetSpeed
+ * Ratio (r)	Power
+ * 4 ≤ r      	150
+ * 3 ≤ r < 4	120
+ * 2 ≤ r < 3	80
+ * 1 ≤ r < 2	60
+ * r < 1	    40
  */
 function electro_ball ($attacker, $defender, $pdo, $is_attacker_player) {
 
@@ -487,10 +519,12 @@ function electro_ball ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Screech:
-An earsplitting screech harshly lowers the target’s Defense stat by two stages.
-Power	—
-Accuracy	85 */
+/**
+ * Screech:
+ * An earsplitting screech harshly lowers the target’s Defense stat by two stages.
+ * Power —
+ * Accuracy 85
+ */
 function screech ($defender, $pdo, $is_attacker_player) {
 
     // Screech decreases the defender's defense by 2 stages
@@ -503,10 +537,12 @@ function screech ($defender, $pdo, $is_attacker_player) {
     $query->execute([':new_defense_modifier' => $new_defense_modifier, ':defender_id' => $defender['id']]);
 }
 
-/*Charm:
-The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target’s Attack stat by two stages.
-Power	—
-Accuracy	100 */
+/**
+ * Charm:
+ * The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target’s Attack stat by two stages.
+ * Power —
+ * Accuracy 100
+ */
 function charm ($defender, $pdo, $is_attacker_player) {
 
     // Charm decreases the defender's attack by 2 stages
@@ -519,13 +555,15 @@ function charm ($defender, $pdo, $is_attacker_player) {
     $query->execute([':new_attack_modifier' => $new_attack_modifier, ':defender_id' => $defender['id']]);
 }
 
-/*Gyro Ball:
-The user tackles the target with a high-speed spin. 
-The slower the user compared to the target, the greater the move’s power
-Power	—
-Accuracy	100
-----
-(Power = 25 × TargetSpeed ÷ UserSpeed) */
+/**
+ * Gyro Ball:
+ * The user tackles the target with a high-speed spin. 
+ * The slower the user compared to the target, the greater the move’s power
+ * Power —
+ * Accuracy 100
+ * ----
+ * (Power = 25 × TargetSpeed ÷ UserSpeed)
+ */
 function gyro_ball ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate power based on speed ratio
@@ -551,10 +589,11 @@ function gyro_ball ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Sand Attack:
-Sand is hurled in the target’s face, reducing the target’s accuracy by one stage.
-Power	—
-Accuracy	100
+/**
+ * Sand Attack:
+ * Sand is hurled in the target’s face, reducing the target’s accuracy by one stage.
+ * Power —
+ * Accuracy 100
  */
 function sand_attack ($defender, $pdo, $is_attacker_player) {
 
@@ -568,10 +607,11 @@ function sand_attack ($defender, $pdo, $is_attacker_player) {
     $query->execute([':new_accuracy_debuff' => $new_accuracy_debuff, ':defender_id' => $defender['id']]);
 }
 
-/*Defense Curl:
-The user curls up to conceal weak spots and raise its Defense stat by one stage.
-Power	—
-Accuracy	—
+/**
+ * Defense Curl:
+ * The user curls up to conceal weak spots and raise its Defense stat by one stage.
+ * Power —
+ * Accuracy —
  */
 function defense_curl ($attacker, $pdo, $is_attacker_player) {
 
@@ -585,10 +625,11 @@ function defense_curl ($attacker, $pdo, $is_attacker_player) {
     $query->execute([':new_defense_modifier' => $new_defense_modifier, ':attacker_id' => $attacker['id']]);
 }
 
-/*Rock Throw:
-The user picks up and throws a small rock at the target to attack.
-Power	50
-Accuracy	90
+/**
+ * Rock Throw:
+ * The user picks up and throws a small rock at the target to attack.
+ * Power 50
+ * Accuracy 90
  */
 function rock_throw ($attacker, $defender, $pdo, $is_attacker_player) {
 
@@ -608,10 +649,11 @@ function rock_throw ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Astonish:
-The user attacks the target while shouting in a startling fashion. This may also make the target flinch (30% chance of skipping turn if target has not yet moved).
-Power	30
-Accuracy	100
+/**
+ * Astonish:
+ * The user attacks the target while shouting in a startling fashion. This may also make the target flinch (30% chance of skipping turn if target has not yet moved).
+ * Power 30
+ * Accuracy 100
  */
 function astonish ($attacker, $defender, $pdo, $is_attacker_player) {
 
@@ -637,6 +679,12 @@ function astonish ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true, 'flinch' => false];
 }
 
+/**
+ * Mud-Slap:
+ * The user hurls mud in the target’s face to inflict damage and lower its accuracy by one stage.
+ * Power 20
+ * Accuracy 100
+ */
 function mud_slap ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
@@ -660,6 +708,12 @@ function mud_slap ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
+/**
+ * Gust:
+ * A gust of wind is whipped up by wings and launched at the target to inflict damage.
+ * Power 40
+ * Accuracy 100
+ */
 function gust ($attacker, $defender, $pdo, $is_attacker_player) {
 
     // Calculate damage
@@ -678,10 +732,12 @@ function gust ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Leer:
-The user gives opposing Pokémon an intimidating leer that lowers the Defense stat by one stage.
-Power	—
-Accuracy	100 */
+/**
+ * Leer:
+ * The user gives opposing Pokémon an intimidating leer that lowers the Defense stat by one stage.
+ * Power —
+ * Accuracy 100
+ */
 function leer ($defender, $pdo, $is_attacker_player) {
 
     // Leer decreases the defender's defense by 1 stage
@@ -730,12 +786,13 @@ function peck ($attacker, $defender, $pdo, $is_attacker_player) {
     return ['hit' => true];
 }
 
-/*Agility:
-The user relaxes and lightens its body to move faster. This sharply raises the Speed stat by two stages.
-Type	Psychic
-Category	Status  Status
-Power	—
-Accuracy	—
+/**
+ * Agility:
+ * The user relaxes and lightens its body to move faster. This sharply raises the Speed stat by two stages.
+ * Type Psychic
+ * Category Status
+ * Power —
+ * Accuracy —
  */
 function agility ($attacker, $pdo, $is_attacker_player) {
 

@@ -7,10 +7,10 @@ export const Phase = {
   LOSS: "LOSS",
 };
 
-function msgText(res) {
-  if (!res) return "";
-  const obj = Array.isArray(res) ? res[0] : res;
-  return obj.result || "";
+// Helper to extract .result from either array or object
+function extractResult(res) {
+  if (Array.isArray(res)) return res[0]?.result;
+  return res?.result;
 }
 
 // Gamestate class that helps determine the players game state amount other important loops in the game.
@@ -231,7 +231,6 @@ export class GameState {
       attackerIsPlayer = true;
       console.log("player attack result:", result);
       // After player attacks first
-      console.log("DEBUG: result (player attack):", result);
     } else {
       // enemy attacks first
       const pick = await Api.pickRandomMove(enemyPokemon.pokemon_id);
@@ -248,7 +247,6 @@ export class GameState {
       attackerIsPlayer = false;
       console.log("enemy attack result:", result);
       // After enemy attacks first
-      console.log("DEBUG: result (enemy attack):", result);
     }
 
     const playerHpUpdate = await Api.getPokemon(
@@ -266,6 +264,11 @@ export class GameState {
     // Update the player's and enemy's current HP
     Object.assign(playerPokemon, playerHpUpdate[0]);
     Object.assign(enemyPokemon, enemyHpUpdate[0]);
+
+
+    console.log(playerPokemon, enemyPokemon);
+
+    this.#lastMoveText = extractResult(result);
 
     // Check if both Pokémon are still alive
     if (playerPokemon.current_hp > 0 && enemyPokemon.current_hp > 0) {
@@ -285,10 +288,12 @@ export class GameState {
           enemyId
         );
 
-        // After enemy counterattacks
-        this.#lastMoveText = [msgText(result), msgText(result2)]
-          .filter(Boolean)
-          .join("\n");
+        console.log("Enemy attack result:", enemyResult);
+        // After enemy's counterattack
+        console.log("DEBUG: enemyResult:", enemyResult);
+        this.#lastMoveText =
+          extractResult(result) + "\n" + extractResult(enemyResult);
+
       } else {
         // Player takes a turn if enemy attacked first
         result2 = await Api.attack(
@@ -300,9 +305,11 @@ export class GameState {
           enemyId
         );
         // After player's counterattack
-        this.#lastMoveText = [msgText(result), msgText(result2)]
-          .filter(Boolean)
-          .join("\n");
+
+        console.log("DEBUG: playerResult:", playerResult);
+        this.#lastMoveText =
+          extractResult(playerResult) + "\n" + extractResult(result);
+
       }
     } else {
       console.log("One of the Pokémon has fainted.");
@@ -405,10 +412,11 @@ export class GameState {
 
       pokemon.current_hp = pokemon.max_hp; // Reset current HP to max HP
       if (this.#player.team.length < 6) {
-        this.#player.team = [...this.#player.team, { ...pokemon }];
-      } else {
-        // otherwise get ride of the last pokemon in the team
-        this.#player.team = [...this.#player.team.slice(1), { ...pokemon }];
+
+        this.#player.team = [...this.#player.team, {...pokemon}];
+      } else { // otherwise get ride of the last pokemon in the team
+        this.#player.team = [...this.#player.team.slice(1), {...pokemon}];
+
       }
       this.#player.active = this.#player.team.length - 1; // Set the last added Pokémon as active
 
