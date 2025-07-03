@@ -197,6 +197,11 @@ document.addEventListener("statechange", ({ detail: snap }) => {
     showLossScreen();
   }
 
+  if (snap.phase === Phase.RESULT && snap.playerRank >= 10) {
+    showWinScreen();
+    return;
+  }
+
   if (snap.phase === Phase.RESULT) {
     buildSelection(snap.currentEnemy.team);
 
@@ -263,6 +268,32 @@ function showLossScreen() {
 document.getElementById("play-again-loss").addEventListener("click", () => {
   location.reload();
   game.Api.clearteam(game.snapshot().player.id); 
+  game.Api.clearteam(game.snapshot().currentEnemy.id);
+  game.snapshot().playerRank = 0; // Reset player rank
+  game.start(); // Restart the game
+});
+
+
+function showWinScreen() {
+  /* Hide every other panel */
+  document.getElementById("battle-screen").classList.add("hidden");
+  document.getElementById("pokemon-selection").classList.add("hidden");
+  document.getElementById("switch-panel").classList.add("hidden");
+  document.getElementById("pre-battle-screen").classList.add("hidden");
+  document.getElementById("loss-screen").classList.add("hidden");
+
+  /* Put the player’s name on the certificate */
+  const trainerName = document.getElementById("identity-name").textContent;
+  document.getElementById("cert-name").textContent = trainerName;
+
+  /* Show the victory panel */
+  document.getElementById("victory-screen").classList.remove("hidden");
+}
+
+/* Play-again button on the victory screen */
+document.getElementById("play-again").addEventListener("click", () => {
+  location.reload();
+  game.Api.clearteam(game.snapshot().player.id);
   game.Api.clearteam(game.snapshot().currentEnemy.id);
   game.snapshot().playerRank = 0; // Reset player rank
   game.start(); // Restart the game

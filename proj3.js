@@ -5,6 +5,7 @@ export const Phase = {
   BATTLE: "BATTLE",
   RESULT: "RESULT",
   LOSS: "LOSS",
+  WIN: "WIN",
 };
 
 function msgText(res) {
