@@ -287,13 +287,9 @@ export class GameState {
           this.#player.id,
           enemyId
         );
-
-        console.log("Enemy attack result:", enemyResult);
-        // After enemy's counterattack
-        console.log("DEBUG: enemyResult:", enemyResult);
+        // Show both results in order: player then enemy
         this.#lastMoveText =
-          extractResult(result) + "\n" + extractResult(enemyResult);
-
+          [extractResult(result), extractResult(result2)].filter(Boolean).join("\n");
       } else {
         // Player takes a turn if enemy attacked first
         result2 = await Api.attack(
@@ -304,12 +300,9 @@ export class GameState {
           this.#player.id,
           enemyId
         );
-        // After player's counterattack
-
-        console.log("DEBUG: playerResult:", playerResult);
+        // Show both results in order: enemy then player
         this.#lastMoveText =
-          extractResult(playerResult) + "\n" + extractResult(result);
-
+          [extractResult(result), extractResult(result2)].filter(Boolean).join("\n");
       }
     } else {
       console.log("One of the Pokémon has fainted.");
