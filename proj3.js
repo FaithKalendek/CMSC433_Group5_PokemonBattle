@@ -7,6 +7,10 @@ export const Phase = {
   LOSS: "LOSS",
 };
 
+  function msgText(res) {
+    return Array.isArray(res) ? res[0].result : res.result;
+  }
+
 // Gamestate class that helps determine the players game state amount other important loops in the game.
 export class GameState {
   // initialize the player's state to the title screen
@@ -25,6 +29,8 @@ export class GameState {
   #currentEnemy = { name: "", avatarUrl: "", team: [], active: 0 };
   #lastMoveText = "";
   #result = "";
+
+
 
   start() {
     this.#setPhase(Phase.TITLE);
@@ -280,7 +286,7 @@ export class GameState {
         );
 
         // After enemy counterattacks
-        this.#lastMoveText = result.result + "\n" + result2.result;
+        this.#lastMoveText = `${result}<br>${result2}`;
       } else {
         // Player takes a turn if enemy attacked first
          result2 = await Api.attack(
@@ -292,7 +298,7 @@ export class GameState {
           enemyId
         );
         // After player's counterattack
-        this.#lastMoveText = result.result + "\n" + result2.result; 
+        this.#lastMoveText = `${result}<br>${result2}`;
       }
     } else {
       console.log("One of the Pokémon has fainted.");
