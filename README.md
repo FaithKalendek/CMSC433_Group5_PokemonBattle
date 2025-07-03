@@ -61,15 +61,3 @@ http://localhost/CMSC433_Group5_PokemonBattle/proj3.html
 ## ✅ No Extra Dependencies Required
 
 No npm, no Composer, no frameworks — just a local web server and a database, all handled through XAMPP.
-
-## 📁 Folder Structure
-
-\"\"\"
-CMSC433_Group5_PokemonBattle/
-├── proj3.html            # Main game page
-├── proj3_setup.php       # Database setup script
-├── assets/               # (Optional) images, stylesheets, etc.
-├── backend/              # (Optional) PHP scripts for gameplay
-├── README.md             # You're reading it!
-└── ...
-\"\"\"
