@@ -1,6 +1,37 @@
 import { game, Phase } from "./proj3.js";
 import { Api } from "./api.js";
 
+/* ---------- Move Description Lookup ---------- */
+const moveDescriptions = {
+  "Growl": "The user growls in an endearing way, making opposing Pokémon less wary. This lowers their Attack stats by one stage.\n\nPower: —\nAccuracy: 100",
+  "Tackle": "A physical attack in which the user charges and slams into the foe with its whole body.\n\nPower: 40\nAccuracy: 100",
+  "Vine Whip": "The target is struck with slender, whiplike vines to inflict damage.\n\nPower: 45\nAccuracy: 100",
+  "Growth": "The user’s body grows all at once, raising its Attack stats by one stage.\n\nPower: —\nAccuracy: —",
+  "Scratch": "Hard, pointed, sharp claws rake the target to inflict damage.\n\nPower: 40\nAccuracy: 100",
+  "Absorb": "A nutrient-draining attack. The user’s HP is restored by half the damage taken by the target.\n\nPower: 20\nAccuracy: 100",
+  "Ember": "The target is attacked with small flames.\n\nPower: 40\nAccuracy: 100",
+  "Tail Whip": "The user wags its tail cutely, making opposing Pokémon less wary and lowering their Defense stat by one stage.\n\nPower: —\nAccuracy: 100",
+  "Bite": "The target is bitten with viciously sharp fangs. This may also make the target flinch (30% chance of skipping turn if target has not yet moved).\n\nPower: 60\nAccuracy: 100",
+  "Howl": "The user howls loudly to raise its spirit, boosting its Attack stat by one stage.\n\nPower: —\nAccuracy: —",
+  "Pound": "The target is physically pounded with a long tail, a foreleg, or the like.\n\nPower: 40\nAccuracy: 100",
+  "Bubble Beam": "A spray of bubbles is forcefully ejected at the target. This may also lower the target’s Speed stat by one stage (10% chance).\n\nPower: 65\nAccuracy: 100",
+  "Water Gun": "The target is blasted with a forceful shot of water.\n\nPower: 40\nAccuracy: 100",
+  "Electro Ball": "The user hurls an electric orb at the target. The faster the user is than the target, the greater the move’s power.\n\nPower: —\nAccuracy: 100",
+  "Screech": "An earsplitting screech harshly lowers the target’s Defense stat by two stages.\n\nPower: —\nAccuracy: 85",
+  "Charm": "The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target’s Attack stat by two stages.\n\nPower: —\nAccuracy: 100",
+  "Gyro Ball": "The user tackles the target with a high-speed spin. The slower the user compared to the target, the greater the move’s power.\n\nPower: —\nAccuracy: 100",
+  "Sand Attack": "Sand is hurled in the target’s face, reducing the target’s accuracy by one stage.\n\nPower: —\nAccuracy: 100",
+  "Defense Curl": "The user curls up to conceal weak spots and raise its Defense stat by one stage.\n\nPower: —\nAccuracy: —",
+  "Rock Throw": "The user picks up and throws a small rock at the target to attack.\n\nPower: 50\nAccuracy: 90",
+  "Astonish": "The user attacks the target while shouting in a startling fashion. This may also make the target flinch (30% chance of skipping turn if target has not yet moved).\n\nPower: 30\nAccuracy: 100",
+  "Mud-Slap": "The user hurls mud in the target’s face to inflict damage and lower its accuracy by one stage.\n\nPower: 20\nAccuracy: 100",
+  "Gust": "A gust of wind is whipped up by wings and launched at the target to inflict damage.\n\nPower: 40\nAccuracy: 100",
+  "Leer": "The user gives opposing Pokémon an intimidating leer that lowers the Defense stat by one stage.\n\nPower: —\nAccuracy: 100",
+  "Wing Attack": "The target is struck with large, imposing wings spread wide to inflict damage.\n\nPower: 60\nAccuracy: 100",
+  "Peck": "The target is jabbed with a sharply pointed beak or horn.\n\nPower: 35\nAccuracy: 100",
+  "Agility": "The user relaxes and lightens its body to move faster. This sharply raises the Speed stat by two stages.\n\nPower: —\nAccuracy: —"
+};
+
 /* ---------- Player Trainer Sprite Lookup ---------- */
 const playerAvatars = [
   { key: "rookie", sprite: "images/ambitiousrookie.png" },
@@ -8,11 +39,6 @@ const playerAvatars = [
   { key: "wanderer", sprite: "images/wildwanderer.png" },
   { key: "beginner", sprite: "images/joyfulbeginner.png" },
 ];
-
-function getPlayerAvatarSprite(key) {
-  const found = playerAvatars.find((a) => a.key === key);
-  return found ? found.sprite : "images/default_player.png";
-}
 
 /* ---------- Opponent Trainer Sprite Lookup ---------- */
 const opponents = [
@@ -110,16 +136,23 @@ async function renderMoves(pokemon) {
   // we expect pokemon.move_ids like [13, 85] (two moves)
   const ids = pokemon.move_ids || [];
 
-  // loop over the 2 buttons you have in HTML
   await Promise.all(
     moveBtns.map(async (btn, i) => {
+      // Find the tooltip span next to the button
+      const tooltipSpan = btn.parentElement.querySelector('.tooltiptext');
       if (ids[i] !== undefined) {
         btn.disabled = false;
-        btn.dataset.moveId = ids[i]; // keep id for click
-        btn.textContent = await getMoveName(ids[i]);
+        btn.dataset.moveId = ids[i];
+        const moveName = await getMoveName(ids[i]);
+        btn.textContent = moveName;
+        // Set the tooltip span's text to the full description
+        if (tooltipSpan) {
+          tooltipSpan.textContent = moveDescriptions[moveName] || moveName;
+        }
       } else {
         btn.disabled = true;
         btn.textContent = "—";
+        if (tooltipSpan) tooltipSpan.textContent = "";
         delete btn.dataset.moveId;
       }
     })
