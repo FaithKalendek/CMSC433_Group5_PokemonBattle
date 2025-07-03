@@ -61,7 +61,7 @@ export class GameState {
         avatarUrl: this.#currentEnemy.avatarUrl,
         team: this.#currentEnemy.team,
         active: this.#currentEnemy.active,
-        id: this.#player.playerRank + 1
+        id: this.#player.playerRank + 1,
       },
       lastMoveText: this.#lastMoveText,
     };
@@ -116,11 +116,12 @@ export class GameState {
       return;
     }
 
-
+    this.#lastMoveText = "";
+    this.#result = "";
 
     switch (this.#player.playerRank) {
       case 0:
-        this.#currentEnemy.name = "Youngster Joey"; 
+        this.#currentEnemy.name = "Youngster Joey";
         break;
       case 1:
         this.#currentEnemy.name = "Lass Ellie";
@@ -132,11 +133,11 @@ export class GameState {
         break;
       case 4:
         this.#currentEnemy.name = "Ace Trainer Quinn";
-        break;  
+        break;
       case 5:
         this.#currentEnemy.name = "Lt. Surge";
         break;
-      case 6: 
+      case 6:
         this.#currentEnemy.name = "Team Rocket";
         break;
       case 7:
@@ -153,7 +154,9 @@ export class GameState {
         break;
     }
 
-    this.#player.team.forEach((pokemon) => { pokemon.current_hp = pokemon.max_hp; });
+    this.#player.team.forEach((pokemon) => {
+      pokemon.current_hp = pokemon.max_hp;
+    });
 
     const level = this.#player.playerRank;
     const pid = this.#player.id;
@@ -162,7 +165,7 @@ export class GameState {
       // If the player has no pokemon, generate a random pokemon
       if (this.#player.playerRank === 0) {
         // Generate a random team if the player has no pokemon
-        const playerTeam = await Api.genRandomTeam(1, "player", pid);
+        const playerTeam = await Api.genRandomTeam(3, "player", pid);
         this.#player.team = playerTeam;
         console.log("Generated player team:");
       }
@@ -189,6 +192,8 @@ export class GameState {
   }
 
   async #runTurn() {
+    let result;
+    let result2;
     const enemyId = this.#player.playerRank + 1;
     if (this.#player.choice == null) return;
 
@@ -211,7 +216,7 @@ export class GameState {
       enemyPokemon.id,
       "player"
     );
-    let result, attackerIsPlayer;
+    let attackerIsPlayer;
 
     if (first === "attacker") {
       // player attacks first
@@ -260,6 +265,7 @@ export class GameState {
     Object.assign(playerPokemon, playerHpUpdate[0]);
     Object.assign(enemyPokemon, enemyHpUpdate[0]);
 
+
     console.log(playerPokemon, enemyPokemon);
 
     this.#lastMoveText = extractResult(result);
@@ -273,7 +279,7 @@ export class GameState {
         const enemyMoveId = Array.isArray(pick)
           ? pick[0].move_id
           : pick.move_id;
-        const enemyResult = await Api.attack(
+        result2 = await Api.attack(
           enemyPokemon.pokemon_id,
           playerPokemon.pokemon_id,
           enemyMoveId,
@@ -281,14 +287,16 @@ export class GameState {
           this.#player.id,
           enemyId
         );
+
         console.log("Enemy attack result:", enemyResult);
         // After enemy's counterattack
         console.log("DEBUG: enemyResult:", enemyResult);
         this.#lastMoveText =
           extractResult(result) + "\n" + extractResult(enemyResult);
+
       } else {
         // Player takes a turn if enemy attacked first
-        const playerResult = await Api.attack(
+        result2 = await Api.attack(
           playerPokemon.pokemon_id,
           enemyPokemon.pokemon_id,
           moveId,
@@ -296,11 +304,12 @@ export class GameState {
           this.#player.id,
           enemyId
         );
-        console.log("Player attack result:", playerResult);
         // After player's counterattack
+
         console.log("DEBUG: playerResult:", playerResult);
         this.#lastMoveText =
           extractResult(playerResult) + "\n" + extractResult(result);
+
       }
     } else {
       console.log("One of the Pokémon has fainted.");
@@ -407,6 +416,7 @@ export class GameState {
         this.#player.team = [...this.#player.team, {...pokemon}];
       } else { // otherwise get ride of the last pokemon in the team
         this.#player.team = [...this.#player.team.slice(1), {...pokemon}];
+
       }
       this.#player.active = this.#player.team.length - 1; // Set the last added Pokémon as active
 
